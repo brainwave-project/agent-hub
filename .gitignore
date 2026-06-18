@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# venv / uv
+.venv/
+uv.lock.bak
+
+# tooling caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# generated gRPC stubs (regenerated at build time from proto/)
+src/agent_hub/adapters/grpc/*_pb2.py
+src/agent_hub/adapters/grpc/*_pb2_grpc.py
+
+# env
+.env
+.env.*

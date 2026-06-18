@@ -1,0 +1,117 @@
+syntax = "proto3";
+
+package knowhub;
+
+// =============================================================================
+// DocumentInternal — know-hub's internal gRPC surface for agent-hub (ADR-AGT-08).
+//
+// Served on know-hub's internal gRPC port (default 50052), NOT exposed via Kong.
+// know-hub remains the system of record: agent-hub reasons and proposes; these
+// RPCs are how it reads payloads/searches and how know-hub performs the
+// authoritative writes (PersistChunks / UpdateMetadata) on agent-hub's behalf
+// (Principle 5 / ADR-AGT-06).
+//
+// Cross-language gRPC (TS server, Python client) follows the proven authhub.proto
+// pattern. This file is the source of truth and is copied to agent-hub/proto/.
+// =============================================================================
+service DocumentInternal {
+  // CRAG retrieve node — reuses Phase-1 hybrid/vector search.
+  rpc SemanticSearch (SemanticSearchRequest) returns (SemanticSearchResponse);
+
+  // Ingestion crew — Extractor fetches the payload to parse.
+  rpc GetPayload     (GetPayloadRequest)     returns (GetPayloadResponse);
+
+  // Ingestion crew — Embedder hands chunks+vectors back; know-hub WRITES them.
+  rpc PersistChunks  (PersistChunksRequest)  returns (PersistChunksResponse);
+
+  // Ingestion crew — Classifier's verdict + terminal status; know-hub WRITES it.
+  rpc UpdateMetadata (UpdateMetadataRequest) returns (UpdateMetadataResponse);
+}
+
+// -----------------------------------------------------------------------------
+// SemanticSearch — CRAG retrieval.
+//
+// REVIEW ISSUE 1 (critical): the original TDD contract carried only {query,
+// top_k}, which would let CRAG retrieve across EVERY user's documents (tenant
+// leak — isolation lives in know-hub's SQL `owner_id = actor` boundary). We
+// carry the calling user's identity so know-hub applies the same ownership
+// predicate it does on the HTTP path. Kong injected X-User-Id / X-User-Roles;
+// agent-hub forwards them here.
+// -----------------------------------------------------------------------------
+message SemanticSearchRequest {
+  string query         = 1;
+  int32  top_k         = 2;
+  string actor_user_id = 3;  // X-User-Id of the CRAG caller — the tenant boundary
+  bool   is_admin      = 4;  // ADMIN bypasses the ownership filter (same as HTTP)
+  double min_score     = 5;  // optional; <=0 → know-hub default (SIMILARITY_THRESHOLD)
+}
+
+message SemanticSearchResponse {
+  repeated SearchResult results = 1;
+}
+
+message SearchResult {
+  string chunk_id    = 1;
+  string text        = 2;
+  float  score       = 3;  // cosine similarity (0–1)
+  string document_id = 4;  // public document id (for citations)
+  string title       = 5;
+}
+
+// -----------------------------------------------------------------------------
+// GetPayload — Extractor input. Returns whichever representation know-hub holds:
+// extracted text where it already has one, otherwise the raw binary + mime so
+// agent-hub can do real parsing (pypdf/python-docx) for types Phase-1 SKIPPED
+// (review Issue 3).
+// -----------------------------------------------------------------------------
+message GetPayloadRequest {
+  string document_id   = 1;  // public document id (from the Kafka event)
+  string actor_user_id = 2;  // event actor — for audit/ownership resolution
+}
+
+message GetPayloadResponse {
+  string raw_text  = 1;  // present when know-hub already has a text layer
+  bytes  binary    = 2;  // present for binary docs needing agent-hub-side parsing
+  string mime_type = 3;
+  bool   found     = 4;
+}
+
+// -----------------------------------------------------------------------------
+// PersistChunks — primary driver for gRPC: repeated float vectors are protobuf
+// packed-encoded (~4x smaller than JSON for 768-dim embeddings). know-hub writes
+// them via its existing ChunkRepository (single-writer invariant).
+// -----------------------------------------------------------------------------
+message Chunk {
+  string         id     = 1;  // optional; know-hub generates if empty
+  string         text   = 2;
+  repeated float vector = 3;  // 768-dim nomic-embed-text; packed
+  int32          seq    = 4;
+  int32          token_count = 5;
+}
+
+message PersistChunksRequest {
+  string         document_id = 1;  // public document id
+  repeated Chunk chunks      = 2;
+  string         strategy    = 3;  // clause | slide | turn | fixed (provenance)
+  string         model       = 4;  // embedding model tag
+}
+
+message PersistChunksResponse {
+  int32 persisted = 1;
+}
+
+// -----------------------------------------------------------------------------
+// UpdateMetadata — Classifier verdict + crew terminal status. know-hub owns the
+// doc.documents row + the embedding_status state machine.
+// -----------------------------------------------------------------------------
+message UpdateMetadataRequest {
+  string document_id    = 1;  // public document id
+  string doc_type       = 2;  // contract | deck | chat | article | ...
+  string topic          = 3;
+  string chunk_strategy = 4;  // clause | slide | turn | fixed
+  string status         = 5;  // embedding_status: INDEXED | SKIPPED | FAILED | INDEXING
+}
+
+message UpdateMetadataResponse {
+  bool ok = 1;
+}
