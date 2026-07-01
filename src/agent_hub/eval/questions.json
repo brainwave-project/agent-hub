@@ -1,0 +1,17 @@
+[
+  {
+    "question": "What is the refund window?",
+    "ground_truth": "30 days from purchase.",
+    "note": "Tests basic factual retrieval + grounded citation."
+  },
+  {
+    "question": "What's the price of it?",
+    "ground_truth": "Depends on the plan in context; CRAG should rewrite the ambiguous query.",
+    "note": "Ambiguous pronoun — exercises the corrective transform_query loop."
+  },
+  {
+    "question": "What is the airspeed velocity of an unladen swallow?",
+    "ground_truth": "",
+    "note": "Unanswerable from the corpus — CRAG should ABSTAIN, not hallucinate."
+  }
+]
