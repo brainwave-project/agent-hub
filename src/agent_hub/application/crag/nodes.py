@@ -18,6 +18,7 @@ import time
 from agent_hub.adapters.ports.embedding import StepRecorder
 from agent_hub.adapters.ports.knowhub import Retriever
 from agent_hub.adapters.ports.reasoning import CragReasoner
+from agent_hub.adapters.ports.rerank import Reranker
 from agent_hub.application.crag.state import CragState
 from agent_hub.domain.models import Citation, RetrievedChunk
 from agent_hub.observability.logging import get_logger
@@ -49,29 +50,54 @@ class CragNodes:
         *,
         top_k: int = 6,
         min_score: float = 0.0,
+        reranker: Reranker | None = None,
+        cross_encoder_enabled: bool = False,
+        rerank_candidate_k: int = 20,
+        rerank_top_n: int = 4,
     ) -> None:
         self._retriever = retriever
         self._reasoner = reasoner
         self._rec = recorder
         self._top_k = top_k
         self._min_score = min_score
+        self._reranker = reranker
+        self._rerank_on = cross_encoder_enabled and reranker is not None
+        self._rerank_candidate_k = rerank_candidate_k
+        self._rerank_top_n = rerank_top_n
 
     # -- deterministic ------------------------------------------------------
 
     async def retrieve(self, state: CragState) -> dict:
         t0 = time.monotonic()
         query = state.get("query") or state["question"]
+        # Two-stage retrieval: when the cross-encoder is on, stage 1 pulls a wider
+        # candidate pool so stage 2 has something to re-rank; otherwise fetch top_k.
+        fetch_k = self._rerank_candidate_k if self._rerank_on else self._top_k
         chunks = await self._retriever.search(
             query=query,
-            top_k=self._top_k,
+            top_k=fetch_k,
             actor_user_id=state.get("actor_user_id", ""),
             is_admin=state.get("is_admin", False),
             min_score=self._min_score,
         )
+
+        reranked = False
+        if self._rerank_on and chunks:
+            before = len(chunks)
+            chunks = await self._reranker.rerank(query, chunks, self._rerank_top_n)
+            reranked = True
+            await self._rec.record(
+                "rerank",
+                decision="cross_encoder",
+                input_summary=f"{before} candidates",
+                output_summary=f"kept top {len(chunks)}",
+                latency_ms=int((time.monotonic() - t0) * 1000),
+            )
+
         top = max((c.score for c in chunks), default=0.0)
         await self._rec.record(
             "retrieve",
-            input_summary=f"query={query!r}",
+            input_summary=f"query={query!r} fetch_k={fetch_k} rerank={reranked}",
             output_summary=f"{len(chunks)} chunks, top={top:.2f}",
             latency_ms=int((time.monotonic() - t0) * 1000),
         )
@@ -142,10 +168,16 @@ class CragNodes:
 # ---------------------------------------------------------------------------
 
 
-def decide_after_grade(state: CragState, max_loops: int):
-    """relevant → generate ; else rewrite & retry until the loop cap, then abstain."""
+def decide_after_grade(state: CragState, max_loops: int, rewrite_enabled: bool = True):
+    """relevant → generate ; else rewrite & retry until the loop cap, then abstain.
+
+    With the corrective loop governed off (rewrite_enabled=False), a weak grade
+    abstains immediately — no rewrite attempt.
+    """
     if state.get("relevant"):
         return "generate"
+    if not rewrite_enabled:
+        return "abstain"
     if state.get("loops", 0) >= max_loops:   # guardrail: never loop forever (§6.4)
         return "abstain"
     return "transform_query"

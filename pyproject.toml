@@ -40,6 +40,14 @@ extract = [
     "pypdf>=5.1",
     "python-docx>=1.1",
 ]
+# Cross-encoder reranker (stage-2 retrieval). Heavy (pulls torch) and optional —
+# install only when the Governance "Cross-Encoder" toggle will be turned on:
+#     uv sync --extra rerank
+# The adapter lazy-imports this and fails open, so the base image stays slim and
+# boots fine without it.
+rerank = [
+    "sentence-transformers>=3.3",
+]
 dev = [
     "ruff>=0.8",
     "pytest>=8.3",
