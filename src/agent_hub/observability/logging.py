@@ -16,6 +16,12 @@ def configure_logging(level: str = "info") -> None:
 
     logging.basicConfig(format="%(message)s", stream=sys.stdout, level=log_level)
 
+    # Quiet noisy third-party loggers even at LOG_LEVEL=debug — aiokafka in
+    # particular dumps full ApiVersion/Metadata responses per poll, which buries
+    # our structured logs. The app's own loggers stay at the configured level.
+    for noisy in ("aiokafka", "kafka", "httpx", "httpcore"):
+        logging.getLogger(noisy).setLevel(max(log_level, logging.WARNING))
+
     structlog.configure(
         processors=[
             structlog.contextvars.merge_contextvars,

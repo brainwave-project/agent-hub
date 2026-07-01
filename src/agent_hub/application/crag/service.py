@@ -15,8 +15,10 @@ from __future__ import annotations
 from collections.abc import AsyncIterator
 from typing import Any
 
+from agent_hub.adapters.governance_repo import GovernanceStore
 from agent_hub.adapters.ports.knowhub import Retriever
 from agent_hub.adapters.ports.reasoning import CragReasoner
+from agent_hub.adapters.ports.rerank import Reranker
 from agent_hub.application.crag.graph import build_crag_graph
 from agent_hub.application.crag.nodes import CragNodes
 from agent_hub.config import Settings
@@ -37,26 +39,39 @@ class CragService:
         runs_repo,          # RunsRepository
         checkpointer,       # AsyncPostgresSaver | None
         settings: Settings,
+        governance: GovernanceStore,
+        reranker: Reranker | None = None,
     ) -> None:
         self._retriever = retriever
         self._reasoner = reasoner
         self._runs = runs_repo
         self._checkpointer = checkpointer
         self._s = settings
+        self._governance = governance
+        self._reranker = reranker
 
     def _build(self, run_id: str):
+        # Read the LIVE governance profile at build time so UI edits take effect
+        # on the very next run without a restart (§13.5).
+        gov = self._governance.current()
         recorder = self._runs.step_recorder(run_id)
         nodes = CragNodes(
             self._retriever,
             self._reasoner,
             recorder,
-            top_k=self._s.crag_top_k,
-            min_score=self._s.crag_min_score,
+            top_k=gov.top_k,
+            min_score=gov.min_score,
+            reranker=self._reranker,
+            cross_encoder_enabled=gov.cross_encoder_enabled,
+            rerank_candidate_k=gov.rerank_candidate_k,
+            rerank_top_n=gov.rerank_top_n,
         )
         return build_crag_graph(
             nodes,
-            max_loops=self._s.crag_max_loops,
-            max_regen=self._s.crag_max_regen,
+            max_loops=gov.max_loops,
+            max_regen=gov.max_regen,
+            query_rewrite_enabled=gov.query_rewrite_enabled,
+            grounding_enabled=gov.grounding_enabled,
             checkpointer=self._checkpointer,
         )
 

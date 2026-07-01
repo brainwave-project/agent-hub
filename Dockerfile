@@ -20,6 +20,14 @@ COPY pyproject.toml ./
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv pip install --system --no-cache .
 
+# --- cross-encoder reranker deps (mirrors the optional `rerank` extra) ---
+# Installed as a separate, stable layer so the heavy torch wheel caches
+# independently of app code. Pinned to the PyTorch CPU index so we get the small
+# CPU wheel, never the multi-GB CUDA build the default index resolves on Linux.
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv pip install --system --no-cache --index-url https://download.pytorch.org/whl/cpu torch \
+    && uv pip install --system --no-cache "sentence-transformers>=3.3"
+
 # --- application layer ---
 COPY src ./src
 COPY proto ./proto

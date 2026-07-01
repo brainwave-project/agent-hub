@@ -24,31 +24,57 @@ from agent_hub.application.crag.nodes import (
 from agent_hub.application.crag.state import CragState
 
 
-def build_crag_graph(nodes: CragNodes, *, max_loops: int = 2, max_regen: int = 1, checkpointer=None):
+def build_crag_graph(
+    nodes: CragNodes,
+    *,
+    max_loops: int = 2,
+    max_regen: int = 1,
+    query_rewrite_enabled: bool = True,
+    grounding_enabled: bool = True,
+    checkpointer=None,
+):
+    """Assemble the CRAG graph. The two corrective phases are governable:
+
+    * query_rewrite_enabled=False drops the transform_query cycle — a weak grade
+      abstains immediately.
+    * grounding_enabled=False drops the check_grounded node — generate goes
+      straight to END (no post-hoc verification / regeneration).
+    """
     g = StateGraph(CragState)
 
     g.add_node("retrieve", nodes.retrieve)
     g.add_node("grade", nodes.grade)
-    g.add_node("transform_query", nodes.transform_query)
     g.add_node("generate", nodes.generate)
-    g.add_node("check_grounded", nodes.check_grounded)
     g.add_node("abstain", nodes.abstain)
+    if query_rewrite_enabled:
+        g.add_node("transform_query", nodes.transform_query)
+    if grounding_enabled:
+        g.add_node("check_grounded", nodes.check_grounded)
 
     g.add_edge(START, "retrieve")
     g.add_edge("retrieve", "grade")
 
+    grade_targets = {"generate": "generate", "abstain": "abstain"}
+    if query_rewrite_enabled:
+        grade_targets["transform_query"] = "transform_query"
     g.add_conditional_edges(
         "grade",
-        partial(decide_after_grade, max_loops=max_loops),
-        {"generate": "generate", "transform_query": "transform_query", "abstain": "abstain"},
+        partial(decide_after_grade, max_loops=max_loops, rewrite_enabled=query_rewrite_enabled),
+        grade_targets,
     )
-    g.add_edge("transform_query", "retrieve")          # ◀── the corrective cycle
-    g.add_edge("generate", "check_grounded")
-    g.add_conditional_edges(
-        "check_grounded",
-        partial(decide_after_grounded, max_regen=max_regen),
-        {"end": END, "generate": "generate"},          # bounded grounding retry
-    )
+    if query_rewrite_enabled:
+        g.add_edge("transform_query", "retrieve")      # ◀── the corrective cycle
+
+    if grounding_enabled:
+        g.add_edge("generate", "check_grounded")
+        g.add_conditional_edges(
+            "check_grounded",
+            partial(decide_after_grounded, max_regen=max_regen),
+            {"end": END, "generate": "generate"},       # bounded grounding retry
+        )
+    else:
+        g.add_edge("generate", END)
+
     g.add_edge("abstain", END)
 
     return g.compile(checkpointer=checkpointer)

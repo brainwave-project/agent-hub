@@ -22,11 +22,12 @@ from contextlib import AsyncExitStack, asynccontextmanager
 
 from fastapi import APIRouter, FastAPI, Header, HTTPException, Request
 from fastapi.responses import StreamingResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 
 from agent_hub import __version__
 from agent_hub.application.hello_graph import hello_app
 from agent_hub.config import get_settings
+from agent_hub.domain.models import GovernanceSettings
 from agent_hub.health.checks import router as health_router
 from agent_hub.observability.logging import configure_logging, get_logger
 
@@ -85,6 +86,27 @@ def _require_ctx(request: Request):
 class ChatRequest(BaseModel):
     message: str
     sessionId: str | None = None
+
+
+class GovernancePatch(BaseModel):
+    """Partial update — every field optional so the UI can PATCH one knob at a
+    time. Unknown fields are ignored; ranges are enforced by GovernanceSettings."""
+
+    model_config = {"extra": "ignore"}
+
+    top_k: int | None = None
+    min_score: float | None = None
+    cross_encoder_enabled: bool | None = None
+    rerank_candidate_k: int | None = None
+    rerank_top_n: int | None = None
+    max_loops: int | None = None
+    max_regen: int | None = None
+    query_rewrite_enabled: bool | None = None
+    grounding_enabled: bool | None = None
+    grade_temperature: float | None = None
+    rewrite_temperature: float | None = None
+    generate_temperature: float | None = None
+    grounding_temperature: float | None = None
 
 
 def create_app() -> FastAPI:
@@ -159,6 +181,100 @@ def create_app() -> FastAPI:
         # M8 — trajectory metrics (correction/abstention/loop-depth/per-node latency, §12.4).
         ctx = _require_ctx(request)
         return await ctx.runs.metrics()
+
+    # -- Governance (§13.5) — runtime-tunable RAG/CRAG knobs -----------------
+
+    @agent.get("/governance")
+    async def get_governance(request: Request) -> dict:
+        """Live settings + shipped defaults + a JSON-schema of bounds so the UI can
+        render each control (ranges, types) without duplicating the contract."""
+        ctx = _require_ctx(request)
+        gov = ctx.governance
+        return {
+            "settings": gov.current().model_dump(),
+            "defaults": gov.defaults.model_dump(),
+            "schema": GovernanceSettings.model_json_schema(),
+        }
+
+    @agent.put("/governance")
+    async def put_governance(
+        patch: GovernancePatch,
+        request: Request,
+        x_user_id: str | None = Header(default=None),
+        x_user_roles: str | None = Header(default=None),
+    ) -> dict:
+        ctx = _require_ctx(request)
+        if not _is_admin(x_user_roles):
+            raise HTTPException(status_code=403, detail="ADMIN role required")
+        try:
+            updated = await ctx.governance.update(
+                patch.model_dump(exclude_none=True), updated_by=x_user_id or ""
+            )
+        except ValidationError as exc:
+            raise HTTPException(status_code=422, detail=exc.errors()) from exc
+        return {"settings": updated.model_dump()}
+
+    @agent.post("/governance/reset")
+    async def reset_governance(
+        request: Request,
+        x_user_roles: str | None = Header(default=None),
+    ) -> dict:
+        ctx = _require_ctx(request)
+        if not _is_admin(x_user_roles):
+            raise HTTPException(status_code=403, detail="ADMIN role required")
+        reset = await ctx.governance.reset()
+        return {"settings": reset.model_dump()}
+
+    # -- Model catalog — every LLM/model the platform runs ------------------
+
+    @agent.get("/models")
+    async def models(request: Request) -> dict:
+        """Catalog of the LLMs/models in use, powering the Observability → LLMs
+        section. Reflects live config (reasoning/embedding/rerank tags) rather than
+        a hardcoded UI list."""
+        ctx = _require_ctx(request)
+        s = ctx.settings
+        gov = ctx.governance.current()
+        return {
+            "models": [
+                {
+                    "id": "reasoning",
+                    "name": s.agent_reasoning_model,
+                    "provider": "Ollama",
+                    "role": "Reasoning · LLM",
+                    "purpose": "CRAG grading, rewrite, generation, grounding, classification.",
+                    "host": s.ollama_base_url,
+                    "params": "8B · Q4_K_M",
+                    "modality": "text → text",
+                    "enabled": True,
+                    "service": "agent-hub",
+                },
+                {
+                    "id": "embedding",
+                    "name": "nomic-embed-text",
+                    "provider": "Ollama",
+                    "role": "Embedding",
+                    "purpose": "768-dim document + query embeddings for pgvector semantic search.",
+                    "host": s.ollama_base_url,
+                    "params": "768-dim",
+                    "modality": "text → vector",
+                    "enabled": True,
+                    "service": "know-hub · agent-hub",
+                },
+                {
+                    "id": "cross-encoder",
+                    "name": s.rerank_model,
+                    "provider": "sentence-transformers",
+                    "role": "Cross-Encoder · Reranker",
+                    "purpose": "Stage-2 joint (query, chunk) re-scoring for retrieval precision.",
+                    "host": "in-process",
+                    "params": "MiniLM-L6",
+                    "modality": "(text, text) → score",
+                    "enabled": gov.cross_encoder_enabled,
+                    "service": "agent-hub",
+                },
+            ]
+        }
 
     app.include_router(agent)
     return app

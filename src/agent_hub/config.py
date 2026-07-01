@@ -39,10 +39,41 @@ class Settings(BaseSettings):
     kafka_brokers: str = "kafka:9092"
 
     # --- CRAG guardrails + retrieval ---
+    # These are the SHIPPED DEFAULTS. At runtime the Governance store (§13.5)
+    # overlays operator overrides persisted in agent.agent_governance, so the
+    # live values can be tuned from the UI without a redeploy.
     crag_max_loops: int = 2          # corrective query-rewrite cap (§6.4)
     crag_max_regen: int = 1          # grounding-retry cap (review Issue 4)
     crag_top_k: int = 6              # chunks fetched per retrieve
     crag_min_score: float = 0.0      # 0 → know-hub applies its own SIMILARITY_THRESHOLD
+
+    # Per-node temperatures (§4.4 principal's note): judgement nodes deterministic
+    # (0), generation warmer for fluency. Governable so operators can trade
+    # determinism ↔ creativity per node without touching code.
+    crag_grade_temperature: float = 0.0
+    crag_rewrite_temperature: float = 0.0
+    crag_generate_temperature: float = 0.2
+    crag_grounding_temperature: float = 0.0
+
+    # Graph-shape toggles — turn a whole corrective phase off without a redeploy.
+    crag_query_rewrite_enabled: bool = True
+    crag_grounding_enabled: bool = True
+
+    # --- Cross-Encoder reranker (two-stage retrieval) ---
+    # Stage 1 (bi-encoder / pgvector) fetches a wide candidate pool; stage 2 (this
+    # cross-encoder) re-scores each (query, chunk) pair jointly and keeps the best
+    # rerank_top_n. Off by default: enabling it requires the optional `rerank`
+    # extra (sentence-transformers + torch). Fail-open — a missing model never
+    # breaks a run, it just skips the rerank stage.
+    cross_encoder_enabled: bool = False
+    rerank_model: str = "cross-encoder/ms-marco-MiniLM-L-6-v2"
+    rerank_candidate_k: int = 20     # stage-1 pool size when reranking is on
+    rerank_top_n: int = 4            # chunks kept after cross-encoder re-scoring
+
+    # --- prompt management (Langfuse) ---
+    # Prompts are authored/versioned in Langfuse and fetched by name; the bundled
+    # DEFAULT_PROMPTS are only a fallback when Langfuse is disabled/unreachable.
+    prompt_label: str = "production"
 
     # --- observability (wired in M4) ---
     langfuse_enabled: bool = False

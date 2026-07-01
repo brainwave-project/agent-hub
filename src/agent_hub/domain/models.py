@@ -8,6 +8,39 @@ from dataclasses import dataclass, field
 
 from pydantic import BaseModel, Field
 
+# --- runtime governance (§13.5) ------------------------------------------------
+
+
+class GovernanceSettings(BaseModel):
+    """Operator-tunable knobs for the whole reasoning path.
+
+    These are the SINGLE source of truth CRAG reads per run. Field bounds are
+    enforced here so an out-of-range value from the API is rejected before it can
+    reach a graph. Defaults are supplied by the config layer (``from_settings``),
+    never hardcoded twice.
+    """
+
+    model_config = {"extra": "forbid"}
+
+    # Retrieval
+    top_k: int = Field(ge=1, le=50, description="Chunks fetched per retrieve (stage 1).")
+    min_score: float = Field(ge=0.0, le=0.99, description="Similarity floor to qualify.")
+    cross_encoder_enabled: bool = Field(description="Enable stage-2 cross-encoder reranking.")
+    rerank_candidate_k: int = Field(ge=1, le=100, description="Stage-1 pool size when reranking.")
+    rerank_top_n: int = Field(ge=1, le=50, description="Chunks kept after re-scoring.")
+
+    # CRAG graph shape
+    max_loops: int = Field(ge=0, le=6, description="Corrective query-rewrite cap.")
+    max_regen: int = Field(ge=0, le=5, description="Grounding-retry cap.")
+    query_rewrite_enabled: bool = Field(description="Enable the corrective query-rewrite loop.")
+    grounding_enabled: bool = Field(description="Enable the post-generation grounding check.")
+
+    # Per-node temperatures
+    grade_temperature: float = Field(ge=0.0, le=1.5, description="Relevance grader temp.")
+    rewrite_temperature: float = Field(ge=0.0, le=1.5, description="Query rewriter temp.")
+    generate_temperature: float = Field(ge=0.0, le=1.5, description="Answer generator temp.")
+    grounding_temperature: float = Field(ge=0.0, le=1.5, description="Grounding checker temp.")
+
 
 @dataclass(frozen=True)
 class RetrievedChunk:
