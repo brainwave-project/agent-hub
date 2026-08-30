@@ -1,0 +1,8 @@
+# Timestamped run output — one file per `make evals`. Noise in review, and
+# regenerable. The promoted baseline in baselines/ IS tracked: it is the
+# reference the gate compares against, so it must travel with the code.
+reports/
+
+# Stage-1 CRAG dumps handed to the isolated RAGAS scorer. Kept OUT of
+# reports/ so the gate cannot mistake one for a report and promote it.
+outcomes/
