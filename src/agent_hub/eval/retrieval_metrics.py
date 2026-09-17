@@ -1,9 +1,10 @@
 """Retrieval metrics, implemented by hand.
 
-These are deliberately NOT imported from a library. The point of this module is
-that the mechanism is readable: you can see exactly what each metric counts, and
-therefore exactly what it hides. Every function's docstring names the specific
-situation in which the number lies to you.
+These are deliberately NOT imported from a library. 
+
+The point of this module is that the mechanism is readable: you can see exactly what each metric counts, and
+therefore exactly what it hides. 
+Every function's docstring names the specific situation in which the number lies to you.
 
 Vocabulary used throughout:
 
@@ -21,7 +22,7 @@ outcome that should score zero, not crash the harness.
 from __future__ import annotations
 
 import math
-from collections.abc import Iterable, Sequence
+from collections.abc import Iterable, Mapping, Sequence
 
 __all__ = [
     "hit_rate",
@@ -29,6 +30,7 @@ __all__ = [
     "precision_at_k",
     "mrr",
     "ndcg_at_k",
+    "graded_ndcg_at_k",
     "average_precision",
     "score_all",
     "METRIC_NAMES",
@@ -138,6 +140,37 @@ def ndcg_at_k(ranked: Sequence[str], relevant: Iterable[str], k: int = 10) -> fl
     # Ideal: every relevant doc packed into the top positions, up to k.
     ideal_hits = min(len(rel), max(k, 0))
     idcg = sum(1.0 / math.log2(position + 1) for position in range(1, ideal_hits + 1))
+    return dcg / idcg if idcg > 0 else 0.0
+
+
+def graded_ndcg_at_k(ranked: Sequence[str], grades: Mapping[str, int], k: int = 10) -> float:
+    """NDCG with GRADED relevance: gain = 2^grade - 1.
+
+    `grades` maps id -> grade (0 = not relevant, 1 = partially relevant,
+    2 = substantially relevant, 3 = fully answers). The exponential gain makes
+    a grade-3 hit worth 7x a grade-1 hit, so a ranking that puts the document
+    that actually answers the question above a merely related one scores higher
+    than the reverse, which binary NDCG cannot tell apart.
+
+    IDCG sorts the grades in descending order and packs them into the top k, so
+    the ideal ranking is "best answers first", not "any relevant first".
+
+    MISLEADS WHEN: grades are assigned inconsistently. The exponential gain
+    amplifies labelling noise: one annotator's 2 being another's 3 changes that
+    item's gain from 3 to 7. Graded NDCG is only as trustworthy as the grading
+    rubric behind it, so write the rubric down and check agreement before
+    trusting a graded-vs-binary disagreement.
+    """
+    positive = {doc: g for doc, g in grades.items() if g > 0}
+    if not positive:
+        return 0.0
+    dcg = sum(
+        (2 ** positive[doc] - 1) / math.log2(position + 1)
+        for position, doc in enumerate(_truncate(ranked, k), start=1)
+        if doc in positive
+    )
+    ideal = sorted(positive.values(), reverse=True)[: max(k, 0)]
+    idcg = sum((2**g - 1) / math.log2(position + 1) for position, g in enumerate(ideal, start=1))
     return dcg / idcg if idcg > 0 else 0.0
 
 

@@ -106,8 +106,12 @@ class KnowHubEvalClient:
 
     # --- ingestion ------------------------------------------------------
 
-    def upload_markdown(self, doc_id: str, body: str) -> str:
+    def upload_markdown(self, doc_id: str, body: str, idempotency_key: str | None = None) -> str:
         """Upload one corpus document. Returns its public `documentId`.
+
+        `idempotency_key` defaults to one derived from `doc_id` alone. Callers
+        uploading the same doc id under several owners (the Eval Lab, one owner
+        per dataset index) must pass a key that includes the owner.
 
         `title` is set to the corpus doc id, which is what makes search hits
         joinable back onto golden records without a separate manifest.
@@ -120,7 +124,7 @@ class KnowHubEvalClient:
             f"{self._base}/api/documents",
             files={"file": (f"{doc_id}.md", body.encode("utf-8"), "text/markdown")},
             data={"title": doc_id, "payloadEngine": "minio", "mimeType": "text/markdown"},
-            headers={"Idempotency-Key": f"eval-seed-{doc_id}"},
+            headers={"Idempotency-Key": idempotency_key or f"eval-seed-{doc_id}"},
         )
         response.raise_for_status()
         payload = response.json()

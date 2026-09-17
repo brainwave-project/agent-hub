@@ -319,3 +319,110 @@ and a pair in `STANDARD_COMPARISONS`.
 **Change a normalisation transform.** Add the field to `NormalizeConfig`, the
 logic to `normalize()`, and an entry to `TRANSFORMS` describing what it costs —
 a test enforces that every field is documented.
+
+---
+
+## Eval Lab — the interactive half (`lab/`)
+
+```bash
+cd infra && make evals-lab     # lean stack + eval-api on :3005
+cd ui && npm run dev           # http://localhost:5173/evaluation
+```
+
+The UI's **Evaluation** section is a front end for `agent_hub.eval.lab`, a
+standalone FastAPI app (`python -m agent_hub.eval.lab`) run as the `eval-api`
+container. It reuses `retrieval_metrics`, `stats` and `arabic.normalize`
+unchanged, so a number in the UI and a number in `make evals` are the same
+arithmetic. Like `eval-runner`, it calls know-hub directly with synthetic
+headers: it is bound to localhost and never routed through Kong.
+
+| Tab | What it is for |
+|---|---|
+| Dataset Construction | Corpus, graded golden items with verbatim evidence spans, chunking preview, per-normalisation indexes |
+| Data Lab | Readiness checks (integrity, labels, leakage, coverage, split, power, index), split designer, power calculator |
+| Retrieval | One query → ranking → every metric term shown; judge results live; score a whole dev split |
+| Experiments | Pre-register → run dev/holdout → report (bootstrap vs t vs cluster CIs, paired deltas, decision) → compare runs |
+
+### Guards that encode discipline, not validation
+
+- **Frozen versions are immutable** (409). Fork to change; the content hash is
+  recomputed on every readiness check, so edits made behind the lab's back are
+  a blocker, not a silent change.
+- **Ad-hoc runs cannot touch the holdout** (409). Only a registered experiment
+  can evaluate it, and every access is logged; a second look needs a written
+  reason.
+- **Registration** requires a frozen, split, blocker-free dataset and records
+  its hash. A registered design cannot be edited.
+- **Reports use the latest run of each arm** and list every run ever made, so a
+  favourable run cannot be selected. Dev-split reports are labelled
+  exploratory; only a registered holdout report is confirmatory.
+- **The decision rule separates two thresholds**: zero ("is there an
+  effect?") and the pre-registered minimum effect ("is it worth acting on?").
+  A CI spanning both is *inconclusive*, never "no effect".
+
+### Two scoring levels
+
+- **document** — HTTP search (hybrid or vector). Unit = document; identical to
+  the offline harness (`tests/test_eval_lab.py` asserts it).
+- **chunk** — gRPC `SemanticSearch` (vector-only). Unit = evidence span. A chunk
+  earns credit for the first not-yet-credited span it contains, so labels
+  survive rechunking and repeated evidence is not rewarded.
+
+### Isolation
+
+Each `(dataset, corpus hash, normalisation)` is uploaded under its own
+deterministic synthetic owner (`store.owner_id_for`). know-hub's ownership
+predicate means a ranking can only contain that index's documents; changing a
+document changes the corpus hash, which marks the old index stale instead of
+mixing versions.
+
+### Store
+
+Plain files under `EVAL_LAB_DIR` (default `eval/lab_store/`): datasets
+(`manifest.json`, `corpus/*.json`, `golden.jsonl`, `indexes.json`),
+`experiments/*.json`, `runs/*.json`. Frozen datasets are worth committing;
+`indexes.json` holds machine-specific document ids.
+
+### Labelling depth (`pooling.py`, `agreement.py`, `generate.py`, `diff.py`)
+
+| Feature | What it measures | Stored as |
+|---|---|---|
+| **Pooled judging** | Union of top-`depth` results from hybrid, vector and chunk retrievers per question; unjudged pooled documents; relevant documents only one retriever found | `pool.json` artefact |
+| **Explicit 0-judgements** | `GoldenItem.judged_nonrelevant` separates *judged* not relevant from *unjudged*; runs report **judged@k** in `Run.diagnostics` | item field (in hash only when non-empty) |
+| **Label audit** | Blind re-annotation → percent agreement, Cohen's κ, quadratic weighted κ, confusion matrices, disagreements with adjudication | `annotations.json` artefact |
+| **Synthetic questions** | Local-Ollama candidates with evidence check, lexical overlap and verbatim-copy flags; human accept/reject queue; accepted items carry `origin="synthetic"` | `candidates.json` artefact |
+| **Version diff** | Docs/items added/removed/changed, relabels, dev→holdout contamination, a comparability verdict | computed |
+
+Artefacts stay writable on frozen versions — auditing a set does not change it.
+New item fields are excluded from the content hash while they hold their
+default, so older frozen hashes stay valid (`tests/test_eval_lab_insight.py`).
+
+### Analysis & practice (`runanalysis.py`, `simulate.py`, `learning.py`)
+
+- **Run sweeps** — every metric at k = 1…20 and after a similarity floor,
+  re-scored offline from the stored rankings (the CRAG_MIN_SCORE trade-off).
+- **Failure analysis** — failed queries with auto-suggested causes
+  (not retrieved, ranked too low, distractor outranked, label gap, vocabulary
+  mismatch, chunk boundary, …) plus manual tags in `run_annotations/`.
+- **Stats Lab** — seeded simulations against a population with a known mean:
+  bootstrap distribution, CI coverage (bootstrap vs t vs normal), CLT, power
+  (discordant-pairs model, empirical vs analytic), p-hacking (many metrics with
+  Holm/Bonferroni, optional stopping). Bounded by `simulate.MAX_WORK`.
+- **Reports** gain Cohen's d_z, a paired t p-value next to the permutation p,
+  Holm-adjusted p over the registered metric family, and the bootstrap
+  distribution of the primary delta.
+- **Learning Path** — missions auto-verified from lab state, or completed with a
+  written reflection (≥ 80 characters). Progress in `learning.json`.
+
+### Statistics added for the lab (`stats.py`)
+
+`cluster_mean_ci` / `paired_cluster_delta_ci` (resample answer-document
+clusters — the honest unit when questions share a document), `t_interval`
+(for contrast: watch it leave [0, 1]), `paired_permutation_p` (sign-flip
+shuffle test), `detectable_effect` (the inverse of `min_sample_size`). Graded
+NDCG (`graded_ndcg_at_k`, gain 2^g − 1) is in `retrieval_metrics.py`.
+
+```bash
+cd agent-hub
+uv run pytest tests/test_eval_lab.py tests/test_stats_extensions.py tests/test_graded_ndcg.py
+```

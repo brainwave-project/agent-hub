@@ -6,3 +6,6 @@ reports/
 # Stage-1 CRAG dumps handed to the isolated RAGAS scorer. Kept OUT of
 # reports/ so the gate cannot mistake one for a report and promote it.
 outcomes/
+
+# Eval Lab working store (datasets, runs, experiments) — local to a machine.
+lab_store/
