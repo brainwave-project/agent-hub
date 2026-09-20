@@ -1,7 +1,7 @@
 """Eval Lab — the interactive half of the evaluation harness.
 
-Serves the UI's Evaluation section (Dataset Construction · Data Lab ·
-Retrieval · Experiments) as a standalone FastAPI app:
+Serves the UI's Evaluation section (Golden Sets · Retrieval ·
+Experiments · Stats Lab · Learning Path) as a standalone FastAPI app:
 
     python -m agent_hub.eval.lab            # :3005
     make evals-lab                          # from infra/, with the lean stack
@@ -21,7 +21,7 @@ Modules:
     splits      deterministic stratified, group-aware dev/holdout splitting
     chunking    preview of know-hub's chunker + evidence location
     scoring     turn a ranking into metrics, at document or evidence level
-    readiness   the Data Lab's "is this dataset fit to evaluate with?" checks
+    readiness   Gate checks — "is this dataset fit to evaluate with?"
     runner      search know-hub, score a split, index a corpus
     analysis    experiment reports: CIs, paired deltas, decisions
     jobs        background job registry

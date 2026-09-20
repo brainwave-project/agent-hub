@@ -233,7 +233,7 @@ def assess(
                 f"{len(straddling)} span(s) exist in the document but in no single 512-token chunk.",
                 "Chunk-level recall for these questions is capped below 1.0 by the chunker, not the "
                 "retriever. That is a real finding about chunking — but it must not be read as a "
-                "retrieval failure. Inspect them in Dataset Construction → Chunking.",
+                "retrieval failure. Inspect them in Golden Sets → Index → Chunking.",
                 straddling,
             )
         )
@@ -526,7 +526,7 @@ def assess(
                 "Index",
                 "warning",
                 "Corpus not indexed",
-                "Index the corpus in Dataset Construction before running retrieval.",
+                "Index the corpus in Golden Sets → Index before running retrieval.",
                 "Indexing is asynchronous; scoring before it finishes yields zeros that look like "
                 "retrieval failures but are races.",
             )
@@ -599,7 +599,7 @@ def assess(
                 "Every document outside a question's relevant set is scored non-relevant by assumption.",
                 "Unjudged is not the same as irrelevant. If a retriever surfaces a relevant document "
                 "you never labelled, it is penalised for being right. Pool several retrievers and "
-                "judge what they return (Dataset Construction → Pool & judge); run diagnostics then "
+                "judge what they return (Golden Sets → Judge → Pool); run diagnostics then "
                 "report judged@k.",
             )
         )

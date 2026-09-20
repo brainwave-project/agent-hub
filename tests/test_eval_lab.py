@@ -15,6 +15,7 @@ from agent_hub.eval.lab.analysis import decide
 from agent_hub.eval.lab.api import create_app
 from agent_hub.eval.lab.chunking import chunk_text, locate_evidence
 from agent_hub.eval.lab.models import (
+    Candidate,
     CorpusDoc,
     DatasetMeta,
     Evidence,
@@ -387,3 +388,49 @@ def test_api_full_experiment_lifecycle(tmp_path):
 
     concluded = client.post("/api/eval/experiments/hyb/conclude", json={"note": "done"}).json()
     assert concluded["status"] == "concluded"
+
+
+def test_accepted_candidate_with_split_survives_a_bulk_resplit(tmp_path):
+    """A curator's split choice at accept-time must be pinned, or the next bulk
+    /split silently overwrites it (this was a real bug: accept() set `split`
+    but never `pinned`)."""
+    store = LabStore(tmp_path)
+    client = TestClient(create_app(store=store, knowhub=FakeKnowHub()))
+    base = "/api/eval/datasets/policies/versions/1"
+
+    assert (
+        client.post("/api/eval/datasets", json={"name": "Policies", "id": "policies"}).status_code
+        == 200
+    )
+    assert (
+        client.put(
+            f"{base}/corpus/leave",
+            json={"doc_id": "leave", "body": "Employees get twenty one days of annual leave each year."},
+        ).status_code
+        == 200
+    )
+
+    store.save_artifact(
+        "policies",
+        1,
+        "candidates",
+        [Candidate(id="cand-1", doc_id="leave", query="how many annual leave days").model_dump()],
+    )
+
+    accepted = client.post(f"{base}/candidates/cand-1/accept", json={"split": "holdout"}).json()
+    accepted_item = next(i for i in accepted["items"] if i["id"] == "syn-001")
+    assert accepted_item["split"] == "holdout"
+    assert accepted_item["pinned"] is True
+
+    lines = [
+        f'{{"id": "q{n}", "query": "{q}", "relevant_doc_ids": ["leave"]}}'
+        for n, q in enumerate(["leave days", "annual leave", "leave per year", "days of leave"])
+    ]
+    assert client.post(f"{base}/items/import", json={"jsonl": "\n".join(lines)}).status_code == 200
+
+    split = client.post(
+        f"{base}/split",
+        json={"holdout_fraction": 0.1, "seed": 1, "stratify_by": [], "group_by": "none"},
+    ).json()
+    resplit_item = next(i for i in split["bundle"]["items"] if i["id"] == "syn-001")
+    assert resplit_item["split"] == "holdout"

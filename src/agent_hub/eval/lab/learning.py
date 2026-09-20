@@ -61,7 +61,7 @@ MODULES: list[dict] = [
                 "why": "Your labels only cover documents you thought of; pooling finds the rest.",
                 "steps": [
                     "Index the corpus",
-                    "Run pooling (Dataset Construction → Pool & judge)",
+                    "Run pooling (Golden Sets → Judge → Pool)",
                     "Judge every pooled document for ≥ 5 items",
                 ],
                 "tab": "/evaluation/dataset",
@@ -73,7 +73,7 @@ MODULES: list[dict] = [
                 "title": "Audit your labels blind",
                 "why": "A metric difference smaller than your labelling noise is not a finding.",
                 "steps": [
-                    "Open Label audit",
+                    "Open Judge → Audit",
                     "Annotate ≥ 10 items as a second annotator",
                     "Read κ, weighted κ, and every disagreement",
                 ],
@@ -101,7 +101,7 @@ MODULES: list[dict] = [
                 "steps": [
                     "Freeze a version",
                     "Fork it and change something",
-                    "Open Versions → diff and read the consequences",
+                    "Open Freeze → Diff and read the consequences",
                 ],
                 "tab": "/evaluation/dataset",
             },
@@ -122,7 +122,7 @@ MODULES: list[dict] = [
                     "Holdout ≥ 25% and ≥ 5 answerable items",
                     "Zero documents straddling the split",
                 ],
-                "tab": "/evaluation/data-lab",
+                "tab": "/evaluation/data-lab?tab=split",
             },
             {
                 "id": "ed-ready",
@@ -130,8 +130,8 @@ MODULES: list[dict] = [
                 "concept": "Data readiness",
                 "title": "Reach zero blockers on a frozen version",
                 "why": "Blockers are defects that make the number wrong, not just noisy.",
-                "steps": ["Fix every blocker in Data Lab", "Freeze the version"],
-                "tab": "/evaluation/data-lab",
+                "steps": ["Fix every blocker in Gate → Checks", "Freeze the version"],
+                "tab": "/evaluation/data-lab?tab=checks",
             },
             {
                 "id": "ed-register",

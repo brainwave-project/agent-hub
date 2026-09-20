@@ -185,7 +185,7 @@ class KnowHubLab:
 def index_is_current(bundle: Bundle, normalization: str) -> tuple[bool, str]:
     state = bundle.indexes.get(normalization)
     if state is None:
-        return False, f"corpus has no '{normalization}' index — index it in Dataset Construction"
+        return False, f"corpus has no '{normalization}' index — index it in Golden Sets → Index"
     if state.corpus_hash != bundle.corpus_hash(normalization):
         return False, f"'{normalization}' index is stale — the corpus changed after indexing"
     not_ready = [

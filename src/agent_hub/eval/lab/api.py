@@ -647,7 +647,7 @@ def create_app(store: LabStore | None = None, knowhub: KnowHubLab | None = None)
                 for c in report["checks"]
                 if c["severity"] == "blocker" and c["category"] != "Index"
             ]
-            problems += [f"Data Lab blocker: {b}" for b in blockers]
+            problems += [f"Gate blocker: {b}" for b in blockers]
             if report["stats"]["holdout"] == 0:
                 problems.append("The holdout split has no answerable items.")
             if problems:
