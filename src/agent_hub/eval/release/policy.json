@@ -1,0 +1,78 @@
+{
+  "id": "kestrel-release",
+  "name": "Kestrel assistant — release policy",
+  "description": "What must hold before a RAG change ships. Blocks on safety and on measured, noise-aware regressions; warns on the rest.",
+  "version": 8,
+  "confidence": 0.95,
+  "require_same_dataset": true,
+  "require_frozen_dataset": true,
+  "require_same_judge": true,
+  "min_items": 20,
+  "max_error_rate": 0.05,
+  "rules": [
+    {
+      "id": "faithfulness-floor",
+      "metric": "faithfulness",
+      "kind": "floor",
+      "threshold": 0.8,
+      "severity": "block",
+      "applies_to": "generation",
+      "rationale": "Unsupported claims are the failure users cannot detect themselves."
+    },
+    {
+      "id": "answer-ok-noninferior",
+      "metric": "answer_ok",
+      "kind": "non_inferior",
+      "threshold": 0.2,
+      "severity": "block",
+      "applies_to": "generation",
+      "rationale": "Correct-answer rate must not be measurably worse than the baseline by more than 20 points. 20, not 10: ~27 dev questions resolve only about ±0.15–0.25, and a tighter margin blocks unchanged reruns. Grow the dataset to tighten it."
+    },
+    {
+      "id": "unanswerable-ceiling",
+      "metric": "answered_unanswerable",
+      "kind": "ceiling",
+      "threshold": 0.0,
+      "severity": "block",
+      "applies_to": "generation",
+      "rationale": "Answering a question no document covers is a fabrication."
+    },
+    {
+      "id": "false-abstention-drop",
+      "metric": "false_abstention",
+      "kind": "max_drop",
+      "threshold": 0.05,
+      "severity": "warn",
+      "applies_to": "generation",
+      "rationale": "More refusals on answerable questions hurt usefulness, not safety."
+    },
+    {
+      "id": "relevance-drop",
+      "metric": "answer_relevance",
+      "kind": "max_drop",
+      "threshold": 0.05,
+      "severity": "warn",
+      "applies_to": "generation",
+      "rationale": "Style regression — worth a look."
+    },
+    {
+      "id": "recall-noninferior",
+      "metric": "recall@k",
+      "kind": "non_inferior",
+      "threshold": 0.05,
+      "severity": "block",
+      "applies_to": "retrieval",
+      "rationale": "The generator cannot cite what retrieval never returned."
+    },
+    {
+      "id": "mrr-drop",
+      "metric": "mrr",
+      "kind": "max_drop",
+      "threshold": 0.05,
+      "severity": "warn",
+      "applies_to": "retrieval",
+      "rationale": "Ranking quality."
+    }
+  ],
+  "updated_at": "2026-09-26T13:36:48.638767+00:00"
+}

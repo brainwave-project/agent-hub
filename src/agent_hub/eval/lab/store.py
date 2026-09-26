@@ -16,7 +16,13 @@ Layout under the store root (`EVAL_LAB_DIR`):
     experiments/<id>.json                                                        not part
     runs/<id>.json                                                               of its hash
     run_annotations/<run_id>.json           failure-analysis tags
-    learning.json                           Learning Path progress
+    gen_runs/<id>.json                      generation pipeline runs (stage traces)
+    judges/<id>.json                        LLM judges (rubric + model, versioned)
+    judge_sets/<id>.json                    samples + human labels for judge validation
+    judge_runs/<id>.json                    one judge applied to one set
+    gate_policies/<id>.json                 release-gate policies
+    gate_decisions/<id>.json                recorded gate decisions (incl. overrides)
+    gate_baselines.json                     policy id -> promoted baseline run
 
 Immutability rule: once a version is frozen, its corpus, items and split can no
 longer be written. The content hash is recorded at freeze time and recomputed on
@@ -54,6 +60,7 @@ __all__ = [
     "Immutable",
     "Conflict",
     "ARTIFACTS",
+    "COLLECTIONS",
     "content_hash",
     "corpus_hash",
     "owner_id_for",
@@ -71,6 +78,16 @@ ARTIFACTS = ("pool", "annotations", "candidates")
 _ITEM_FIELDS_ADDED_LATER: dict[str, object] = {"judged_nonrelevant": [], "origin": "human"}
 
 _LOCK = threading.RLock()
+
+#: Plain JSON collections for the generation half (one file per document).
+COLLECTIONS = (
+    "gen_runs",
+    "judges",
+    "judge_sets",
+    "judge_runs",
+    "gate_policies",
+    "gate_decisions",
+)
 
 
 class NotFound(LookupError):
@@ -161,7 +178,7 @@ class Bundle:
 class LabStore:
     def __init__(self, root: pathlib.Path) -> None:
         self.root = root
-        for sub in ("datasets", "experiments", "runs", "run_annotations"):
+        for sub in ("datasets", "experiments", "runs", "run_annotations", *COLLECTIONS):
             (root / sub).mkdir(parents=True, exist_ok=True)
 
     # --- paths --------------------------------------------------------------
@@ -472,3 +489,52 @@ class LabStore:
             raw.pop("results", None)
             out.append(raw)
         return sorted(out, key=lambda r: r.get("created_at", ""), reverse=True)
+
+    # --- generation-half collections -------------------------------------------
+
+    def _coll(self, kind: str) -> pathlib.Path:
+        if kind not in COLLECTIONS:
+            raise ValueError(f"unknown collection {kind!r}")
+        return self.root / kind
+
+    def put_doc_json(self, kind: str, doc_id: str, data: dict) -> None:
+        with _LOCK:
+            _write_json(self._coll(kind) / f"{doc_id}.json", data)
+
+    def get_doc_json(self, kind: str, doc_id: str) -> dict:
+        return _read_json(self._coll(kind) / f"{doc_id}.json")
+
+    def list_doc_json(self, kind: str) -> list[dict]:
+        return [_read_json(p) for p in sorted(self._coll(kind).glob("*.json"))]
+
+    def delete_doc_json(self, kind: str, doc_id: str) -> None:
+        with _LOCK:
+            path = self._coll(kind) / f"{doc_id}.json"
+            if not path.exists():
+                raise NotFound(f"{kind} {doc_id}")
+            path.unlink()
+
+    def save_gen_run(self, run) -> None:
+        self.put_doc_json("gen_runs", run.id, run.model_dump())
+
+    def get_gen_run(self, run_id: str):
+        from agent_hub.eval.lab.genmodels import GenRun
+
+        return GenRun.model_validate(self.get_doc_json("gen_runs", run_id))
+
+    def list_gen_runs(self, dataset_id: str | None = None) -> list[dict]:
+        out = []
+        for raw in self.list_doc_json("gen_runs"):
+            if dataset_id and raw.get("dataset_id") != dataset_id:
+                continue
+            raw.pop("results", None)
+            out.append(raw)
+        return sorted(out, key=lambda r: r.get("created_at", ""), reverse=True)
+
+    def gate_baselines(self) -> dict:
+        path = self.root / "gate_baselines.json"
+        return json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
+
+    def save_gate_baselines(self, data: dict) -> None:
+        with _LOCK:
+            _write_json(self.root / "gate_baselines.json", data)

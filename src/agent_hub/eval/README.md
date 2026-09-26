@@ -342,6 +342,10 @@ headers: it is bound to localhost and never routed through Kong.
 | Data Lab | Readiness checks (integrity, labels, leakage, coverage, split, power, index), split designer, power calculator |
 | Retrieval | One query → ranking → every metric term shown; judge results live; score a whole dev split |
 | Experiments | Pre-register → run dev/holdout → report (bootstrap vs t vs cluster CIs, paired deltas, decision) → compare runs |
+| Stats Lab | Seeded simulations with a known truth: bootstrap, CI coverage, CLT, power, p-hacking |
+| Generation | Metrics playground (failure-mode scenarios), instrumented pipeline runs, component attribution + fault injection, run compare |
+| Judge Lab | Versioned rubrics, blind human labels, judge validation, position / verbosity / consistency probes, drift |
+| Release Gate | Written policy → evaluate baseline vs candidate → record decisions (overrides need a reason) → export for CI |
 
 ### Guards that encode discipline, not validation
 
@@ -411,8 +415,29 @@ default, so older frozen hashes stay valid (`tests/test_eval_lab_insight.py`).
 - **Reports** gain Cohen's d_z, a paired t p-value next to the permutation p,
   Holm-adjusted p over the registered metric family, and the bootstrap
   distribution of the primary delta.
-- **Learning Path** — missions auto-verified from lab state, or completed with a
-  written reflection (≥ 80 characters). Progress in `learning.json`.
+- The Learning Path page was removed from the UI; `learning.py` and its
+  `/learning` routes remain but nothing calls them.
+
+### Generation, judges and the release gate
+
+| Module | What it does |
+|---|---|
+| `llm.py` | Thin httpx client for Ollama (`/api/chat`, `/api/embed`) with pinned temperature and seed. The `LLM` protocol is the seam tests fake. |
+| `genmetrics.py` | Faithfulness (per-claim), answer relevance (rubric and RAGAS's embedding method), context precision / recall (LLM, plus label-based twins from evidence spans), claim-F1 correctness, binary answer verdict. Every metric returns its steps and documents how it lies (`FAILURE_MODES`). |
+| `scenarios.py` | Playground cases that each break one thing (stale context, vacuous abstention, relevant-but-wrong, rank, lazy reference, padding, a judge that guesses). |
+| `pipeline.py` | CRAG-shaped pipeline (retrieve → rerank + top-n → grade → generate → optional grounding) that judges each stage given its input and blames the first failing one. `fault` breaks one stage on purpose; `fault_matrix` checks attribution finds it. |
+| `judgelab.py` | Judge runs, validation against human labels (κ with CI, fail recall, pass-rate gap, Rogan–Gladen correction, human–human ceiling), position / verbosity / self-consistency probes, drift between runs. |
+| `release_gate.py`, `gate_cli.py` | `GatePolicy` preconditions (same dataset hash, frozen, same judge fingerprint, min items, error rate) and rules (floor, ceiling, max_drop, non_inferior) with noise advisories. CLI exit 0 / 1 / 2 for CI (`.github/workflows/eval-gate.yml`, snapshot in `release/`). |
+| `routes_generation.py`, `routes_gate.py` | HTTP routes under `/api/eval/gen`, `/judges`, `/judge-sets`, `/judge-runs`, `/gate`. |
+
+Finding it reproduces on the lab pipeline: with the CRAG grader on and 4
+chunks of context, the grader rejects almost every context that holds the
+answer, and component attribution blames `grade` for nearly every failure —
+the `CRAG_MIN_SCORE` finding above, seen stage by stage.
+
+```bash
+uv run pytest tests/test_eval_generation.py
+```
 
 ### Statistics added for the lab (`stats.py`)
 

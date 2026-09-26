@@ -217,7 +217,9 @@ def _parse_item(raw: dict) -> GoldenItem:
 # --- app ---------------------------------------------------------------------------
 
 
-def create_app(store: LabStore | None = None, knowhub: KnowHubLab | None = None) -> FastAPI:
+def create_app(
+    store: LabStore | None = None, knowhub: KnowHubLab | None = None, llm=None
+) -> FastAPI:
     store = store or LabStore(pathlib.Path(os.environ.get("EVAL_LAB_DIR", str(DEFAULT_LAB_DIR))))
     kh = knowhub or KnowHubLab(
         base_url=os.environ.get("KNOW_HUB_URL", "http://know-hub:3002"),
@@ -230,7 +232,8 @@ def create_app(store: LabStore | None = None, knowhub: KnowHubLab | None = None)
 
     app = FastAPI(
         title="Brainwave Eval Lab",
-        description="Dataset construction, data readiness, retrieval evaluation and experiments.",
+        description="Dataset construction, data readiness, retrieval evaluation, experiments, "
+        "generation metrics, LLM-as-judge validation and the release gate.",
         docs_url="/api/eval/docs",
         openapi_url="/api/eval/openapi.json",
     )
@@ -789,8 +792,11 @@ def create_app(store: LabStore | None = None, knowhub: KnowHubLab | None = None)
     app.include_router(api)
     # Imported here: both modules import from this package's runner/store, and
     # keeping them out of module scope keeps api.py importable on its own.
-    from agent_hub.eval.lab import routes_insight, routes_labeling
+    from agent_hub.eval.lab import routes_gate, routes_generation, routes_insight, routes_labeling
+    from agent_hub.eval.lab.llm import OllamaLLM
 
     app.include_router(routes_labeling.build_router(store, kh, jobs, _bundle_json))
     app.include_router(routes_insight.build_router(store))
+    app.include_router(routes_generation.build_router(store, kh, llm or OllamaLLM(), jobs))
+    app.include_router(routes_gate.build_router(store))
     return app

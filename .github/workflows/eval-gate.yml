@@ -1,0 +1,86 @@
+# =============================================================================
+# Eval release gate — the Eval Lab's policy decision on every pull request.
+#
+# Two jobs, split by cost:
+#
+#   eval-unit      The measurement code itself (metrics, stats, attribution,
+#                  judge validation, gate logic). Fake LLM + fake know-hub, so no
+#                  stack is needed. If these fail, no number the lab reports can
+#                  be trusted, so the gate never runs on broken arithmetic.
+#
+#   release-gate   `agent_hub.eval.lab.gate_cli` on the committed snapshot in
+#                  src/agent_hub/eval/release/ (policy + baseline + candidate
+#                  run). The expensive half — running the pipeline with an 8B
+#                  model — happens where the GPU is: in the Eval Lab, then
+#                  Release Gate → "Export for CI". The snapshot is committed
+#                  with the change it measures, so the reviewer sees the numbers
+#                  in the diff.
+#
+# What blocks the merge (see the policy file for the rules):
+#   exit 1  BLOCK — a precondition failed (different dataset or judge, draft
+#           dataset, too few items, too many errors) or a `block` rule failed.
+#   exit 2  The gate could not run (snapshot missing or invalid). Also a
+#           failure: a change to the reasoning path must carry its evidence.
+#   exit 0  PASS, or PASS WITH WARNINGS (warnings go to the job summary).
+#
+# The gate job only triggers for changes that can move answer quality — the
+# CRAG graph, prompts, reasoning adapters, the eval code, or the snapshot.
+# =============================================================================
+name: eval-gate
+
+on:
+  pull_request:
+    paths:
+      - "src/agent_hub/application/crag/**"
+      - "src/agent_hub/adapters/prompts.py"
+      - "src/agent_hub/adapters/ollama.py"
+      - "src/agent_hub/adapters/reranker.py"
+      - "src/agent_hub/adapters/know_hub_grpc.py"
+      - "src/agent_hub/eval/**"
+      - "tests/test_eval_*.py"
+      - "tests/test_retrieval_metrics.py"
+      - "tests/test_stats_extensions.py"
+      - "pyproject.toml"
+      - ".github/workflows/eval-gate.yml"
+  push:
+    branches: [main]
+    paths:
+      - "src/agent_hub/eval/**"
+      - ".github/workflows/eval-gate.yml"
+  workflow_dispatch:
+
+jobs:
+  eval-unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: uv sync --extra dev
+      - name: gRPC stubs (gitignored; the lab imports them)
+        run: uv run python scripts/gen_proto.py
+      - name: Eval unit tests
+        run: >
+          uv run pytest -q
+          tests/test_eval_generation.py tests/test_eval_lab.py tests/test_eval_lab_insight.py
+          tests/test_retrieval_metrics.py tests/test_stats_extensions.py tests/test_graded_ndcg.py
+
+  release-gate:
+    needs: eval-unit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: uv sync
+      - name: Release gate
+        run: |
+          uv run python -m agent_hub.eval.lab.gate_cli \
+            --policy    src/agent_hub/eval/release/policy.json \
+            --baseline  src/agent_hub/eval/release/baseline.json \
+            --candidate src/agent_hub/eval/release/candidate.json \
+            --summary   "$GITHUB_STEP_SUMMARY"
