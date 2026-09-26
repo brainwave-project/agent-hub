@@ -48,6 +48,15 @@ extract = [
 rerank = [
     "sentence-transformers>=3.3",
 ]
+# Offline evaluation harness (agent_hub.eval). RAGAS pulls a large eval-only
+# dependency tree (datasets, pandas, pyarrow), so it stays out of the runtime
+# image — `make evals` installs it into the dev venv volume on first run.
+# The retrieval metrics, statistics, and Arabic normalisation need NOTHING from
+# this extra; only the generation-quality stage does.
+eval = [
+    "ragas>=0.2,<0.3",
+    "datasets>=3.0",
+]
 dev = [
     "ruff>=0.8",
     "pytest>=8.3",

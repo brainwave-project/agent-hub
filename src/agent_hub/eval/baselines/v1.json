@@ -1,0 +1,449 @@
+{
+  "timestamp": "2026-08-29T19:07:36.035237+00:00",
+  "dataset_version": "v1",
+  "config": {
+    "k": 5,
+    "holdout_only": false,
+    "reasoning_model": "llama3.1:8b-instruct-q4_K_M",
+    "ollama_base_url": "http://ollama:11434",
+    "crag_top_k": 6,
+    "crag_min_score": 0.65,
+    "cross_encoder_enabled": false,
+    "judge": "judge",
+    "judge_model": "llama3.1:8b-instruct-q4_K_M"
+  },
+  "variants": {
+    "en:baseline": {
+      "description": "en | query as-typed | corpus raw | hybrid",
+      "lang": "en",
+      "k": 5,
+      "n": 11,
+      "metrics": {
+        "hit_rate": {
+          "mean": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0
+        },
+        "recall@k": {
+          "mean": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0
+        },
+        "precision@k": {
+          "mean": 0.23636363636363636,
+          "ci_low": 0.2,
+          "ci_high": 0.3090909090909091
+        },
+        "mrr": {
+          "mean": 0.9545454545454546,
+          "ci_low": 0.8636363636363636,
+          "ci_high": 1.0
+        },
+        "ndcg@k": {
+          "mean": 0.9708846409094332,
+          "ci_low": 0.9126539227282997,
+          "ci_high": 1.0
+        },
+        "map": {
+          "mean": 0.9575757575757575,
+          "ci_low": 0.8727272727272727,
+          "ci_high": 1.0
+        }
+      },
+      "by_trap": {
+        "none": 1.0
+      },
+      "by_difficulty": {
+        "easy": 1.0,
+        "hard": 1.0,
+        "medium": 1.0
+      },
+      "errors": {}
+    },
+    "en:vector-only": {
+      "description": "en | query as-typed | corpus raw | vector-only",
+      "lang": "en",
+      "k": 5,
+      "n": 11,
+      "metrics": {
+        "hit_rate": {
+          "mean": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0
+        },
+        "recall@k": {
+          "mean": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0
+        },
+        "precision@k": {
+          "mean": 0.23636363636363636,
+          "ci_low": 0.2,
+          "ci_high": 0.3090909090909091
+        },
+        "mrr": {
+          "mean": 0.9545454545454546,
+          "ci_low": 0.8636363636363636,
+          "ci_high": 1.0
+        },
+        "ndcg@k": {
+          "mean": 0.9708846409094332,
+          "ci_low": 0.9126539227282997,
+          "ci_high": 1.0
+        },
+        "map": {
+          "mean": 0.9575757575757575,
+          "ci_low": 0.8727272727272727,
+          "ci_high": 1.0
+        }
+      },
+      "by_trap": {
+        "none": 1.0
+      },
+      "by_difficulty": {
+        "easy": 1.0,
+        "hard": 1.0,
+        "medium": 1.0
+      },
+      "errors": {}
+    },
+    "ar:baseline": {
+      "description": "ar | query as-typed | corpus raw | hybrid",
+      "lang": "ar",
+      "k": 5,
+      "n": 15,
+      "metrics": {
+        "hit_rate": {
+          "mean": 0.8,
+          "ci_low": 0.6,
+          "ci_high": 1.0
+        },
+        "recall@k": {
+          "mean": 0.8,
+          "ci_low": 0.6,
+          "ci_high": 1.0
+        },
+        "precision@k": {
+          "mean": 0.16000000000000003,
+          "ci_low": 0.12000000000000001,
+          "ci_high": 0.2
+        },
+        "mrr": {
+          "mean": 0.6088888888888888,
+          "ci_low": 0.38999999999999996,
+          "ci_high": 0.83
+        },
+        "ndcg@k": {
+          "mean": 0.6691513833132811,
+          "ci_low": 0.4781334564757703,
+          "ci_high": 0.8545019576871957
+        },
+        "map": {
+          "mean": 0.6088888888888888,
+          "ci_low": 0.38999999999999996,
+          "ci_high": 0.83
+        }
+      },
+      "by_trap": {
+        "alef-hamza": 1.0,
+        "alef-maqsura": 1.0,
+        "diacritics": 0.0,
+        "digits": 0.5,
+        "none": 1.0,
+        "taa-marbuta": 1.0,
+        "tatweel": 1.0
+      },
+      "by_difficulty": {
+        "easy": 0.75,
+        "hard": 0.3333333333333333,
+        "medium": 1.0
+      },
+      "errors": {}
+    },
+    "ar:vector-only": {
+      "description": "ar | query as-typed | corpus raw | vector-only",
+      "lang": "ar",
+      "k": 5,
+      "n": 15,
+      "metrics": {
+        "hit_rate": {
+          "mean": 0.8,
+          "ci_low": 0.6,
+          "ci_high": 1.0
+        },
+        "recall@k": {
+          "mean": 0.8,
+          "ci_low": 0.6,
+          "ci_high": 1.0
+        },
+        "precision@k": {
+          "mean": 0.16000000000000003,
+          "ci_low": 0.12000000000000001,
+          "ci_high": 0.2
+        },
+        "mrr": {
+          "mean": 0.6088888888888888,
+          "ci_low": 0.38999999999999996,
+          "ci_high": 0.83
+        },
+        "ndcg@k": {
+          "mean": 0.6691513833132811,
+          "ci_low": 0.4781334564757703,
+          "ci_high": 0.8545019576871957
+        },
+        "map": {
+          "mean": 0.6088888888888888,
+          "ci_low": 0.38999999999999996,
+          "ci_high": 0.83
+        }
+      },
+      "by_trap": {
+        "alef-hamza": 1.0,
+        "alef-maqsura": 1.0,
+        "diacritics": 0.0,
+        "digits": 0.5,
+        "none": 1.0,
+        "taa-marbuta": 1.0,
+        "tatweel": 1.0
+      },
+      "by_difficulty": {
+        "easy": 0.75,
+        "hard": 0.3333333333333333,
+        "medium": 1.0
+      },
+      "errors": {}
+    },
+    "ar:query-norm": {
+      "description": "ar | query normalised | corpus raw | hybrid",
+      "lang": "ar",
+      "k": 5,
+      "n": 15,
+      "metrics": {
+        "hit_rate": {
+          "mean": 0.7333333333333333,
+          "ci_low": 0.5333333333333333,
+          "ci_high": 0.9333333333333333
+        },
+        "recall@k": {
+          "mean": 0.7333333333333333,
+          "ci_low": 0.5333333333333333,
+          "ci_high": 0.9333333333333333
+        },
+        "precision@k": {
+          "mean": 0.14666666666666667,
+          "ci_low": 0.10666666666666667,
+          "ci_high": 0.18666666666666668
+        },
+        "mrr": {
+          "mean": 0.6614814814814814,
+          "ci_low": 0.442962962962963,
+          "ci_high": 0.874074074074074
+        },
+        "ndcg@k": {
+          "mean": 0.7079895034755974,
+          "ci_low": 0.5079895034755975,
+          "ci_high": 0.8879208370979987
+        },
+        "map": {
+          "mean": 0.6614814814814814,
+          "ci_low": 0.442962962962963,
+          "ci_high": 0.874074074074074
+        }
+      },
+      "by_trap": {
+        "alef-hamza": 1.0,
+        "alef-maqsura": 1.0,
+        "diacritics": 0.0,
+        "digits": 0.0,
+        "none": 1.0,
+        "taa-marbuta": 1.0,
+        "tatweel": 1.0
+      },
+      "by_difficulty": {
+        "easy": 0.5,
+        "hard": 0.3333333333333333,
+        "medium": 1.0
+      },
+      "errors": {}
+    },
+    "ar:both-norm": {
+      "description": "ar | query normalised | corpus normalized | hybrid",
+      "lang": "ar",
+      "k": 5,
+      "n": 15,
+      "metrics": {
+        "hit_rate": {
+          "mean": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0
+        },
+        "recall@k": {
+          "mean": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0
+        },
+        "precision@k": {
+          "mean": 0.2,
+          "ci_low": 0.2,
+          "ci_high": 0.2
+        },
+        "mrr": {
+          "mean": 0.7911111111111111,
+          "ci_low": 0.628888888888889,
+          "ci_high": 0.9333333333333333
+        },
+        "ndcg@k": {
+          "mean": 0.8432474876251638,
+          "ci_low": 0.72021417805985,
+          "ci_high": 0.9507906338095277
+        },
+        "map": {
+          "mean": 0.7911111111111111,
+          "ci_low": 0.628888888888889,
+          "ci_high": 0.9333333333333333
+        }
+      },
+      "by_trap": {
+        "alef-hamza": 1.0,
+        "alef-maqsura": 1.0,
+        "diacritics": 1.0,
+        "digits": 1.0,
+        "none": 1.0,
+        "taa-marbuta": 1.0,
+        "tatweel": 1.0
+      },
+      "by_difficulty": {
+        "easy": 1.0,
+        "hard": 1.0,
+        "medium": 1.0
+      },
+      "errors": {}
+    },
+    "ar:both-norm-vector-only": {
+      "description": "ar | query normalised | corpus normalized | vector-only",
+      "lang": "ar",
+      "k": 5,
+      "n": 15,
+      "metrics": {
+        "hit_rate": {
+          "mean": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0
+        },
+        "recall@k": {
+          "mean": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0
+        },
+        "precision@k": {
+          "mean": 0.2,
+          "ci_low": 0.2,
+          "ci_high": 0.2
+        },
+        "mrr": {
+          "mean": 0.7911111111111111,
+          "ci_low": 0.628888888888889,
+          "ci_high": 0.9333333333333333
+        },
+        "ndcg@k": {
+          "mean": 0.8432474876251638,
+          "ci_low": 0.72021417805985,
+          "ci_high": 0.9507906338095277
+        },
+        "map": {
+          "mean": 0.7911111111111111,
+          "ci_low": 0.628888888888889,
+          "ci_high": 0.9333333333333333
+        }
+      },
+      "by_trap": {
+        "alef-hamza": 1.0,
+        "alef-maqsura": 1.0,
+        "diacritics": 1.0,
+        "digits": 1.0,
+        "none": 1.0,
+        "taa-marbuta": 1.0,
+        "tatweel": 1.0
+      },
+      "by_difficulty": {
+        "easy": 1.0,
+        "hard": 1.0,
+        "medium": 1.0
+      },
+      "errors": {}
+    }
+  },
+  "comparisons": [
+    {
+      "question": "Query-side normalisation alone (no reindex)",
+      "baseline": "ar:baseline",
+      "variant": "ar:query-norm",
+      "metric": "recall@k",
+      "delta": -0.06666666666666667,
+      "ci_low": -0.2,
+      "ci_high": 0.0,
+      "significant": false,
+      "direction": "no change"
+    },
+    {
+      "question": "Additional gain from normalising the corpus too (requires reindex)",
+      "baseline": "ar:query-norm",
+      "variant": "ar:both-norm",
+      "metric": "recall@k",
+      "delta": 0.26666666666666666,
+      "ci_low": 0.06666666666666667,
+      "ci_high": 0.4666666666666667,
+      "significant": true,
+      "direction": "improvement"
+    },
+    {
+      "question": "Total gain from end-to-end normalisation",
+      "baseline": "ar:baseline",
+      "variant": "ar:both-norm",
+      "metric": "recall@k",
+      "delta": 0.2,
+      "ci_low": 0.0,
+      "ci_high": 0.4,
+      "significant": false,
+      "direction": "no change"
+    },
+    {
+      "question": "What the 'english' tsvector contributes on Arabic",
+      "baseline": "ar:vector-only",
+      "variant": "ar:baseline",
+      "metric": "recall@k",
+      "delta": 0.0,
+      "ci_low": 0.0,
+      "ci_high": 0.0,
+      "significant": false,
+      "direction": "no change"
+    },
+    {
+      "question": "What the 'english' tsvector contributes on English",
+      "baseline": "en:vector-only",
+      "variant": "en:baseline",
+      "metric": "recall@k",
+      "delta": 0.0,
+      "ci_low": 0.0,
+      "ci_high": 0.0,
+      "significant": false,
+      "direction": "no change"
+    }
+  ],
+  "generation": {
+    "en": {
+      "_scored": 3.0,
+      "_abstained": 0.0,
+      "_judge_errors": 0.0,
+      "faithfulness": 0.8888888888888888,
+      "answer_relevancy": 0.9666666666666667
+    },
+    "ar": {
+      "_scored": 3.0,
+      "_abstained": 0.0,
+      "_judge_errors": 0.0,
+      "faithfulness": 1.0,
+      "answer_relevancy": 1.0
+    }
+  }
+}

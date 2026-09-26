@@ -1,0 +1,859 @@
+{
+  "kind": "generation",
+  "id": "gen_20260926-125325_32e784",
+  "dataset_id": "kestrel-hr-policies-en",
+  "dataset_version": 1,
+  "dataset_hash": "7c208dbd4ca2f389d84902408e1f1265f762f5c9cc13dcc4ac52594f54671e70",
+  "dataset_status": "frozen",
+  "corpus_hash": "508e2c100736b6a0b8671e2adb7e3762842b5a51835253f68231832ff7e58777",
+  "spec": {
+    "name": "baseline",
+    "candidate_k": 10,
+    "min_score": 0.0,
+    "rerank": "none",
+    "top_n": 4,
+    "grader": true,
+    "generator": "strict",
+    "generate_temperature": 0.0,
+    "grounding": false,
+    "fault": "none",
+    "model": null
+  },
+  "split": "dev",
+  "item_ids": [
+    "q-001",
+    "q-002",
+    "q-003",
+    "q-004",
+    "q-011",
+    "q-012",
+    "q-013",
+    "q-014",
+    "q-015",
+    "q-016",
+    "q-017",
+    "q-018",
+    "q-019",
+    "q-020",
+    "q-021",
+    "q-022",
+    "q-023",
+    "q-024",
+    "q-031",
+    "q-032",
+    "q-033",
+    "q-034",
+    "q-036",
+    "q-037",
+    "q-038",
+    "q-040",
+    "syn-001"
+  ],
+  "llm_context_metrics": true,
+  "judge": {
+    "model": "llama3.1:8b-instruct-q4_K_M",
+    "temperature": 0.0,
+    "seed": 7,
+    "prompt_version": "genmetrics-v1"
+  },
+  "judge_fingerprint": "b5b5457c979bdcfa",
+  "status": "done",
+  "created_at": "2026-09-26T12:53:25.656060+00:00",
+  "finished_at": "2026-09-26T12:59:56.715924+00:00",
+  "results": [
+    {
+      "item_id": "q-001",
+      "query": "How many days of paid holiday do full-time staff get each year?",
+      "answerable": true,
+      "trap": "none",
+      "difficulty": "easy",
+      "answer": "According to the Annual Leave Policy [doc:annual-leave-policy score:0.74], full-time employees receive 25 days of paid annual leave per calendar year, in addition to public holidays.",
+      "abstained": false,
+      "metrics": {
+        "context_recall_labels": 1.0,
+        "context_precision_labels": 1.0,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 1.0,
+        "context_recall": 1.0,
+        "false_abstention": 0.0,
+        "faithfulness": 1.0,
+        "answer_relevance": 1.0,
+        "answer_correctness": 1.0,
+        "answer_ok": 1.0
+      },
+      "blame": "none",
+      "outcome": "correct",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "q-002",
+      "query": "What is the daily meal limit when I'm travelling for work?",
+      "answerable": true,
+      "trap": "exact-term",
+      "difficulty": "medium",
+      "answer": "I don't have enough information in the available documents to answer that confidently.",
+      "abstained": true,
+      "metrics": {
+        "context_recall_labels": 0.5,
+        "context_precision_labels": 1.0,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 0.0,
+        "context_recall": 0.0,
+        "answer_ok": 0.0,
+        "false_abstention": 1.0,
+        "answer_correctness": 0.0
+      },
+      "blame": "grade",
+      "outcome": "false_abstention",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "q-003",
+      "query": "Until when can I use leave days I carried over from last year?",
+      "answerable": true,
+      "trap": "none",
+      "difficulty": "easy",
+      "answer": "I don't have enough information in the available documents to answer that confidently.",
+      "abstained": true,
+      "metrics": {
+        "context_recall_labels": 1.0,
+        "context_precision_labels": 0.5,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 0.5,
+        "context_recall": 1.0,
+        "answer_ok": 0.0,
+        "false_abstention": 1.0,
+        "answer_correctness": 0.0
+      },
+      "blame": "grade",
+      "outcome": "false_abstention",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "q-004",
+      "query": "I got sick in the middle of my vacation - can I get those days back?",
+      "answerable": true,
+      "trap": "synonym",
+      "difficulty": "hard",
+      "answer": "I don't have enough information in the available documents to answer that confidently.",
+      "abstained": true,
+      "metrics": {
+        "context_recall_labels": 1.0,
+        "context_precision_labels": 1.0,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 0.5,
+        "context_recall": 0.5,
+        "answer_ok": 0.0,
+        "false_abstention": 1.0,
+        "answer_correctness": 0.0
+      },
+      "blame": "grade",
+      "outcome": "false_abstention",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "q-011",
+      "query": "Which weekdays do we have to be in the office?",
+      "answerable": true,
+      "trap": "none",
+      "difficulty": "easy",
+      "answer": "I don't have enough information in the available documents to answer that confidently.",
+      "abstained": true,
+      "metrics": {
+        "context_recall_labels": 1.0,
+        "context_precision_labels": 0.25,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 0.25,
+        "context_recall": 1.0,
+        "answer_ok": 0.0,
+        "false_abstention": 1.0,
+        "answer_correctness": 0.0
+      },
+      "blame": "grade",
+      "outcome": "false_abstention",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "q-012",
+      "query": "Can I work from a beach in Spain for a month?",
+      "answerable": true,
+      "trap": "synonym",
+      "difficulty": "hard",
+      "answer": "I don't have enough information in the available documents to answer that confidently.",
+      "abstained": true,
+      "metrics": {
+        "context_recall_labels": 1.0,
+        "context_precision_labels": 1.0,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 0.0,
+        "context_recall": 1.0,
+        "answer_ok": 0.0,
+        "false_abstention": 1.0,
+        "answer_correctness": 0.0
+      },
+      "blame": "grade",
+      "outcome": "false_abstention",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "q-013",
+      "query": "Will the company pay for my home broadband?",
+      "answerable": true,
+      "trap": "synonym",
+      "difficulty": "medium",
+      "answer": "I don't have enough information in the available documents to answer that confidently.",
+      "abstained": true,
+      "metrics": {
+        "context_recall_labels": 1.0,
+        "context_precision_labels": 1.0,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 0.0,
+        "context_recall": 1.0,
+        "answer_ok": 0.0,
+        "false_abstention": 1.0,
+        "answer_correctness": 0.0
+      },
+      "blame": "grade",
+      "outcome": "false_abstention",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "q-014",
+      "query": "How much can I claim for a desk chair for working from home?",
+      "answerable": true,
+      "trap": "exact-term",
+      "difficulty": "medium",
+      "answer": "According to [4] (doc:expense-policy-2021-archived), there is no specific information about claiming for a desk chair for working from home. However, it does mention that every claim needs a receipt.\n\nBut according to [1] (doc:remote-work-policy) and [2] (doc:remote-work-policy), which are more relevant to the context of remote work, there is a one-off home office allowance of 300 euros for a desk chair or desk, through the expense system within the first six months of starting hybrid work.\n\nTherefore, you can claim up to 300 euros for a desk chair as part of your home office allowance.",
+      "abstained": false,
+      "metrics": {
+        "context_recall_labels": 1.0,
+        "context_precision_labels": 1.0,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 1.0,
+        "context_recall": 1.0,
+        "false_abstention": 0.0,
+        "faithfulness": 0.75,
+        "answer_relevance": 1.0,
+        "answer_correctness": 0.8571428571428571,
+        "answer_ok": 1.0
+      },
+      "blame": "none",
+      "outcome": "correct",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "q-015",
+      "query": "Which form do I fill in after losing a receipt?",
+      "answerable": true,
+      "trap": "exact-term",
+      "difficulty": "easy",
+      "answer": "I don't have enough information in the available documents to answer that confidently.",
+      "abstained": true,
+      "metrics": {
+        "context_recall_labels": 1.0,
+        "context_precision_labels": 0.5,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 0.5,
+        "context_recall": 1.0,
+        "answer_ok": 0.0,
+        "false_abstention": 1.0,
+        "answer_correctness": 0.0
+      },
+      "blame": "grade",
+      "outcome": "false_abstention",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "q-016",
+      "query": "What is the rate per km for using my own car on business?",
+      "answerable": true,
+      "trap": "exact-term",
+      "difficulty": "easy",
+      "answer": "I don't have enough information in the available documents to answer that confidently.",
+      "abstained": true,
+      "metrics": {
+        "context_recall_labels": 1.0,
+        "context_precision_labels": 0.3333333333333333,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 0.3333333333333333,
+        "context_recall": 1.0,
+        "answer_ok": 0.0,
+        "false_abstention": 1.0,
+        "answer_correctness": 0.0
+      },
+      "blame": "grade",
+      "outcome": "false_abstention",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "q-017",
+      "query": "How long do I have to submit an expense claim?",
+      "answerable": true,
+      "trap": "none",
+      "difficulty": "medium",
+      "answer": "I don't have enough information in the available documents to answer that confidently.",
+      "abstained": true,
+      "metrics": {
+        "context_recall_labels": 1.0,
+        "context_precision_labels": 0.5,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 0.5,
+        "context_recall": 1.0,
+        "answer_ok": 0.0,
+        "false_abstention": 1.0,
+        "answer_correctness": 0.0
+      },
+      "blame": "grade",
+      "outcome": "false_abstention",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "q-018",
+      "query": "When am I allowed to fly premium economy?",
+      "answerable": true,
+      "trap": "none",
+      "difficulty": "medium",
+      "answer": "I don't have enough information in the available documents to answer that confidently.",
+      "abstained": true,
+      "metrics": {
+        "context_recall_labels": 1.0,
+        "context_precision_labels": 1.0,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 1.0,
+        "context_recall": 1.0,
+        "answer_ok": 0.0,
+        "false_abstention": 1.0,
+        "answer_correctness": 0.0
+      },
+      "blame": "grade",
+      "outcome": "false_abstention",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "q-019",
+      "query": "What's the hotel budget per night in Zurich?",
+      "answerable": true,
+      "trap": "exact-term",
+      "difficulty": "medium",
+      "answer": "I don't have enough information in the available documents to answer that confidently.",
+      "abstained": true,
+      "metrics": {
+        "context_recall_labels": 1.0,
+        "context_precision_labels": 1.0,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 1.0,
+        "context_recall": 0.0,
+        "answer_ok": 0.0,
+        "false_abstention": 1.0,
+        "answer_correctness": 0.0
+      },
+      "blame": "grade",
+      "outcome": "false_abstention",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "q-020",
+      "query": "Can I book a cheaper flight on another website and still get my money back?",
+      "answerable": true,
+      "trap": "synonym",
+      "difficulty": "hard",
+      "answer": "I don't have enough information in the available documents to answer that confidently.",
+      "abstained": true,
+      "metrics": {
+        "context_recall_labels": 1.0,
+        "context_precision_labels": 1.0,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 1.0,
+        "context_recall": 1.0,
+        "answer_ok": 0.0,
+        "false_abstention": 1.0,
+        "answer_correctness": 0.0
+      },
+      "blame": "grade",
+      "outcome": "false_abstention",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "q-021",
+      "query": "I want to stay a few extra days on holiday after a work trip - who pays for what?",
+      "answerable": true,
+      "trap": "multi-doc",
+      "difficulty": "hard",
+      "answer": "I don't have enough information in the available documents to answer that confidently.",
+      "abstained": true,
+      "metrics": {
+        "context_recall_labels": 1.0,
+        "context_precision_labels": 1.0,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 0.3333333333333333,
+        "context_recall": 0.5,
+        "answer_ok": 0.0,
+        "false_abstention": 1.0,
+        "answer_correctness": 0.0
+      },
+      "blame": "grade",
+      "outcome": "false_abstention",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "q-022",
+      "query": "I left my work laptop on the train. What should I do?",
+      "answerable": true,
+      "trap": "none",
+      "difficulty": "easy",
+      "answer": "I don't have enough information in the available documents to answer that confidently.",
+      "abstained": true,
+      "metrics": {
+        "context_recall_labels": 1.0,
+        "context_precision_labels": 1.0,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 0.0,
+        "context_recall": 1.0,
+        "answer_ok": 0.0,
+        "false_abstention": 1.0,
+        "answer_correctness": 0.0
+      },
+      "blame": "grade",
+      "outcome": "false_abstention",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "q-023",
+      "query": "How long does my account password have to be?",
+      "answerable": true,
+      "trap": "exact-term",
+      "difficulty": "easy",
+      "answer": "I don't have enough information in the available documents to answer that confidently.",
+      "abstained": true,
+      "metrics": {
+        "context_recall_labels": 1.0,
+        "context_precision_labels": 1.0,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 1.0,
+        "context_recall": 1.0,
+        "answer_ok": 0.0,
+        "false_abstention": 1.0,
+        "answer_correctness": 0.0
+      },
+      "blame": "grade",
+      "outcome": "false_abstention",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "q-024",
+      "query": "I clicked a link in a dodgy email by accident. Will I be punished?",
+      "answerable": true,
+      "trap": "synonym",
+      "difficulty": "hard",
+      "answer": "I don't have enough information in the available documents to answer that confidently.",
+      "abstained": true,
+      "metrics": {
+        "context_recall_labels": 1.0,
+        "context_precision_labels": 0.3333333333333333,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 0.3333333333333333,
+        "context_recall": 1.0,
+        "answer_ok": 0.0,
+        "false_abstention": 1.0,
+        "answer_correctness": 0.0
+      },
+      "blame": "grade",
+      "outcome": "false_abstention",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "q-031",
+      "query": "If I put 8% of my salary into the pension, how much does Kestrel add?",
+      "answerable": true,
+      "trap": "exact-term",
+      "difficulty": "medium",
+      "answer": "I don't have enough information in the available documents to answer that confidently.",
+      "abstained": true,
+      "metrics": {
+        "context_recall_labels": 1.0,
+        "context_precision_labels": 1.0,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 1.0,
+        "context_recall": 1.0,
+        "answer_ok": 0.0,
+        "false_abstention": 1.0,
+        "answer_correctness": 0.0
+      },
+      "blame": "grade",
+      "outcome": "false_abstention",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "q-032",
+      "query": "Does private medical insurance pay for new glasses?",
+      "answerable": true,
+      "trap": "none",
+      "difficulty": "hard",
+      "answer": "I don't have enough information in the available documents to answer that confidently.",
+      "abstained": true,
+      "metrics": {
+        "context_recall_labels": 1.0,
+        "context_precision_labels": 1.0,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 0.0,
+        "context_recall": 1.0,
+        "answer_ok": 0.0,
+        "false_abstention": 1.0,
+        "answer_correctness": 0.0
+      },
+      "blame": "grade",
+      "outcome": "false_abstention",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "q-033",
+      "query": "Can I report fraud without giving my name?",
+      "answerable": true,
+      "trap": "synonym",
+      "difficulty": "easy",
+      "answer": "According to document [1] (doc:whistleblowing-procedure), you can report fraud anonymously through the independent Speak-Up hotline, which is available 24 hours a day in several languages and allows reports to be made by phone or through its website.",
+      "abstained": false,
+      "metrics": {
+        "context_recall_labels": 1.0,
+        "context_precision_labels": 1.0,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 1.0,
+        "context_recall": 1.0,
+        "false_abstention": 0.0,
+        "faithfulness": 1.0,
+        "answer_relevance": 1.0,
+        "answer_correctness": 0.75,
+        "answer_ok": 1.0
+      },
+      "blame": "none",
+      "outcome": "correct",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "q-034",
+      "query": "How quickly will I hear back after raising a concern?",
+      "answerable": true,
+      "trap": "none",
+      "difficulty": "medium",
+      "answer": "I don't have enough information in the available documents to answer that confidently.",
+      "abstained": true,
+      "metrics": {
+        "context_recall_labels": 1.0,
+        "context_precision_labels": 1.0,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 1.0,
+        "context_recall": 1.0,
+        "answer_ok": 0.0,
+        "false_abstention": 1.0,
+        "answer_correctness": 0.0
+      },
+      "blame": "grade",
+      "outcome": "false_abstention",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "q-036",
+      "query": "When can I change my pension contribution or buy extra holiday days?",
+      "answerable": true,
+      "trap": "multi-doc",
+      "difficulty": "hard",
+      "answer": "I don't have enough information in the available documents to answer that confidently.",
+      "abstained": true,
+      "metrics": {
+        "context_recall_labels": 1.0,
+        "context_precision_labels": 0.41666666666666663,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 1.0,
+        "context_recall": 1.0,
+        "answer_ok": 0.0,
+        "false_abstention": 1.0,
+        "answer_correctness": 0.0
+      },
+      "blame": "grade",
+      "outcome": "false_abstention",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "q-037",
+      "query": "What security rules do I have to follow when working from home?",
+      "answerable": true,
+      "trap": "multi-doc",
+      "difficulty": "medium",
+      "answer": "Based on the provided context, specifically [1] (doc:remote-work-policy score:0.72) and [3] (doc:it-security-policy score:0.66), when working from home, you must follow these security rules:\n\n* Connect to company systems only through the company VPN.\n* Do not use public computers.\n* Lock your screen whenever you leave your device, including at home.\n* Confidential papers must not be printed at home.\n\nAdditionally, as stated in [3] (doc:it-security-policy score:0.66), when accessing customer data, only company-managed devices may be used.",
+      "abstained": false,
+      "metrics": {
+        "context_recall_labels": 1.0,
+        "context_precision_labels": 0.5833333333333333,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 0.5,
+        "context_recall": 1.0,
+        "false_abstention": 0.0,
+        "faithfulness": 1.0,
+        "answer_relevance": 1.0,
+        "answer_correctness": 0.8888888888888888,
+        "answer_ok": 1.0
+      },
+      "blame": "none",
+      "outcome": "correct",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "q-038",
+      "query": "What's the daily allowance on a business trip and does it include food?",
+      "answerable": true,
+      "trap": "multi-doc",
+      "difficulty": "hard",
+      "answer": "I don't have enough information in the available documents to answer that confidently.",
+      "abstained": true,
+      "metrics": {
+        "context_recall_labels": 1.0,
+        "context_precision_labels": 0.5,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 0.5,
+        "context_recall": 1.0,
+        "answer_ok": 0.0,
+        "false_abstention": 1.0,
+        "answer_correctness": 0.0
+      },
+      "blame": "grade",
+      "outcome": "false_abstention",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "q-040",
+      "query": "Is there a company car scheme for managers?",
+      "answerable": false,
+      "trap": "unanswerable",
+      "difficulty": "hard",
+      "answer": "I don't have enough information in the available documents to answer that confidently.",
+      "abstained": true,
+      "metrics": {
+        "answered_unanswerable": 0.0,
+        "answer_ok": 1.0
+      },
+      "blame": "none",
+      "outcome": "correct_abstention",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "syn-001",
+      "query": "How much can I claim for per diem?",
+      "answerable": true,
+      "trap": "none",
+      "difficulty": "easy",
+      "answer": "I don't have enough information in the available documents to answer that confidently.",
+      "abstained": true,
+      "metrics": {
+        "context_recall_labels": 0.0,
+        "context_precision_labels": 0.0,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 1.0,
+        "context_recall": 1.0,
+        "answer_ok": 0.0,
+        "false_abstention": 1.0,
+        "answer_correctness": 0.0
+      },
+      "blame": "rerank",
+      "outcome": "false_abstention",
+      "flags": [],
+      "error": null
+    }
+  ],
+  "aggregates": {
+    "answer_correctness": {
+      "mean": 0.13446275946275946,
+      "low": 0.03286401098901117,
+      "high": 0.26603708791208786,
+      "n": 26,
+      "sd": 0.32355718249486015
+    },
+    "answer_ok": {
+      "mean": 0.18518518518518517,
+      "low": 0.037037037037037035,
+      "high": 0.3333333333333333,
+      "n": 27,
+      "sd": 0.3958473906635696
+    },
+    "answer_relevance": {
+      "mean": 1.0,
+      "low": 1.0,
+      "high": 1.0,
+      "n": 4,
+      "sd": 0.0
+    },
+    "answered_unanswerable": {
+      "mean": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "n": 1,
+      "sd": 0.0
+    },
+    "context_precision": {
+      "mean": 0.5865384615384616,
+      "low": 0.42948717948717946,
+      "high": 0.7339743589743589,
+      "n": 26,
+      "sd": 0.39754857790573445
+    },
+    "context_precision_labels": {
+      "mean": 0.7660256410256411,
+      "low": 0.6442307692307693,
+      "high": 0.8846153846153846,
+      "n": 26,
+      "sd": 0.318868860861876
+    },
+    "context_recall": {
+      "mean": 0.8846153846153846,
+      "low": 0.7692307692307693,
+      "high": 0.9807692307692307,
+      "n": 26,
+      "sd": 0.2935197542821371
+    },
+    "context_recall_labels": {
+      "mean": 0.9423076923076923,
+      "low": 0.8461538461538461,
+      "high": 1.0,
+      "n": 26,
+      "sd": 0.21572774865200245
+    },
+    "faithfulness": {
+      "mean": 0.9375,
+      "low": 0.8125,
+      "high": 1.0,
+      "n": 4,
+      "sd": 0.125
+    },
+    "false_abstention": {
+      "mean": 0.8461538461538461,
+      "low": 0.6923076923076923,
+      "high": 0.9615384615384616,
+      "n": 26,
+      "sd": 0.36794648440311994
+    },
+    "retrieval_recall_labels": {
+      "mean": 1.0,
+      "low": 1.0,
+      "high": 1.0,
+      "n": 26,
+      "sd": 0.0
+    }
+  },
+  "components": {
+    "stages": {
+      "ingestion": {
+        "ok": 26,
+        "skip": 1
+      },
+      "retrieval": {
+        "ok": 26,
+        "skip": 1
+      },
+      "rerank": {
+        "ok": 24,
+        "warn": 1,
+        "skip": 1,
+        "fail": 1
+      },
+      "grade": {
+        "ok": 5,
+        "fail": 21,
+        "skip": 1
+      },
+      "generation": {
+        "ok": 4,
+        "skip": 23
+      }
+    },
+    "blame": {
+      "none": 5,
+      "grade": 21,
+      "rerank": 1
+    },
+    "blame_by_trap": {
+      "exact-term": {
+        "grade": 6,
+        "none": 1
+      },
+      "multi-doc": {
+        "grade": 3,
+        "none": 1
+      },
+      "none": {
+        "none": 1,
+        "grade": 7,
+        "rerank": 1
+      },
+      "synonym": {
+        "grade": 5,
+        "none": 1
+      },
+      "unanswerable": {
+        "none": 1
+      }
+    },
+    "outcomes": {
+      "correct": 4,
+      "false_abstention": 22,
+      "correct_abstention": 1
+    },
+    "funnel": [
+      {
+        "step": "answerable questions",
+        "n": 26
+      },
+      {
+        "step": "evidence indexed",
+        "n": 26
+      },
+      {
+        "step": "evidence in candidates",
+        "n": 26
+      },
+      {
+        "step": "evidence in context",
+        "n": 25
+      },
+      {
+        "step": "context accepted",
+        "n": 4
+      },
+      {
+        "step": "answered correctly",
+        "n": 4
+      }
+    ],
+    "flags": {}
+  },
+  "diagnostics": {
+    "errors": 0.0,
+    "mean_latency_ms": 14474.51994796295,
+    "judge_calls": 188.0
+  },
+  "error": null
+}

@@ -1,0 +1,895 @@
+{
+  "kind": "generation",
+  "id": "gen_20260926-130006_38afe5",
+  "dataset_id": "kestrel-hr-policies-en",
+  "dataset_version": 1,
+  "dataset_hash": "7c208dbd4ca2f389d84902408e1f1265f762f5c9cc13dcc4ac52594f54671e70",
+  "dataset_status": "frozen",
+  "corpus_hash": "508e2c100736b6a0b8671e2adb7e3762842b5a51835253f68231832ff7e58777",
+  "spec": {
+    "name": "grader-off",
+    "candidate_k": 10,
+    "min_score": 0.0,
+    "rerank": "none",
+    "top_n": 4,
+    "grader": false,
+    "generator": "strict",
+    "generate_temperature": 0.0,
+    "grounding": false,
+    "fault": "none",
+    "model": null
+  },
+  "split": "dev",
+  "item_ids": [
+    "q-001",
+    "q-002",
+    "q-003",
+    "q-004",
+    "q-011",
+    "q-012",
+    "q-013",
+    "q-014",
+    "q-015",
+    "q-016",
+    "q-017",
+    "q-018",
+    "q-019",
+    "q-020",
+    "q-021",
+    "q-022",
+    "q-023",
+    "q-024",
+    "q-031",
+    "q-032",
+    "q-033",
+    "q-034",
+    "q-036",
+    "q-037",
+    "q-038",
+    "q-040",
+    "syn-001"
+  ],
+  "llm_context_metrics": true,
+  "judge": {
+    "model": "llama3.1:8b-instruct-q4_K_M",
+    "temperature": 0.0,
+    "seed": 7,
+    "prompt_version": "genmetrics-v1"
+  },
+  "judge_fingerprint": "b5b5457c979bdcfa",
+  "status": "done",
+  "created_at": "2026-09-26T13:00:06.912789+00:00",
+  "finished_at": "2026-09-26T13:11:28.880666+00:00",
+  "results": [
+    {
+      "item_id": "q-001",
+      "query": "How many days of paid holiday do full-time staff get each year?",
+      "answerable": true,
+      "trap": "none",
+      "difficulty": "easy",
+      "answer": "According to the Annual Leave Policy [doc:annual-leave-policy score:0.74], full-time employees receive 25 days of paid annual leave per calendar year, in addition to public holidays.",
+      "abstained": false,
+      "metrics": {
+        "context_recall_labels": 1.0,
+        "context_precision_labels": 1.0,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 1.0,
+        "context_recall": 1.0,
+        "false_abstention": 0.0,
+        "faithfulness": 1.0,
+        "answer_relevance": 1.0,
+        "answer_correctness": 1.0,
+        "answer_ok": 1.0
+      },
+      "blame": "none",
+      "outcome": "correct",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "q-002",
+      "query": "What is the daily meal limit when I'm travelling for work?",
+      "answerable": true,
+      "trap": "exact-term",
+      "difficulty": "medium",
+      "answer": "I don't have enough information in the available documents to answer that confidently regarding the daily meal limit when travelling for work. The provided policies mention reimbursement limits and per diem amounts, but they do not explicitly state a \"daily meal limit\" for business travel. However, [3] (doc:expense-policy-2021-archived) mentions that business travel meals are reimbursed up to a daily limit of 45 euros.",
+      "abstained": true,
+      "metrics": {
+        "context_recall_labels": 0.5,
+        "context_precision_labels": 1.0,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 0.0,
+        "context_recall": 0.0,
+        "answer_ok": 0.0,
+        "false_abstention": 1.0,
+        "answer_correctness": 0.0
+      },
+      "blame": "generation",
+      "outcome": "false_abstention",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "q-003",
+      "query": "Until when can I use leave days I carried over from last year?",
+      "answerable": true,
+      "trap": "none",
+      "difficulty": "easy",
+      "answer": "According to [1] (doc:annual-leave-policy score:0.71) and [2] (doc:annual-leave-policy score:0.70), you can carry over a maximum of five unused days into the next calendar year, but these carried-over days must be used by 31 March; any carried-over days not used by that date are lost.",
+      "abstained": false,
+      "metrics": {
+        "context_recall_labels": 1.0,
+        "context_precision_labels": 0.5,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 0.5,
+        "context_recall": 1.0,
+        "false_abstention": 0.0,
+        "faithfulness": 1.0,
+        "answer_relevance": 1.0,
+        "answer_correctness": 0.5,
+        "answer_ok": 1.0
+      },
+      "blame": "none",
+      "outcome": "correct",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "q-004",
+      "query": "I got sick in the middle of my vacation - can I get those days back?",
+      "answerable": true,
+      "trap": "synonym",
+      "difficulty": "hard",
+      "answer": "Based on the provided context, it appears that there are two relevant policies: [1] Sick Leave Policy and [2] Annual Leave Policy.\n\nAccording to the Sick Leave Policy (doc:sick-leave-policy), if you fall ill during your annual leave, you can reclassify those days as sick leave, provided you notify your manager on the first day of illness and supply a medical certificate for the period. The reclassified days are returned to their annual leave balance.\n\nHowever, there is no mention in either policy about getting back vacation days that were lost due to illness. It only mentions how to handle absences during annual leave.\n\nTherefore, I don't have enough information in the available documents to answer that confidently.",
+      "abstained": true,
+      "metrics": {
+        "context_recall_labels": 1.0,
+        "context_precision_labels": 1.0,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 0.5,
+        "context_recall": 1.0,
+        "answer_ok": 0.0,
+        "false_abstention": 1.0,
+        "answer_correctness": 0.0
+      },
+      "blame": "generation",
+      "outcome": "false_abstention",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "q-011",
+      "query": "Which weekdays do we have to be in the office?",
+      "answerable": true,
+      "trap": "none",
+      "difficulty": "easy",
+      "answer": "According to [doc:remote-work-policy score:0.63] and [doc:remote-work-policy score:0.58], eligible employees are required to be available between 10:00 and 15:00 local time on working days, which are the company's core hours.\n\nHowever, it does not specify which weekdays these core hours apply to.",
+      "abstained": false,
+      "metrics": {
+        "context_recall_labels": 1.0,
+        "context_precision_labels": 0.25,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 0.25,
+        "context_recall": 1.0,
+        "false_abstention": 0.0,
+        "faithfulness": 0.5,
+        "answer_relevance": 0.25,
+        "answer_correctness": 0.5,
+        "answer_ok": 0.0
+      },
+      "blame": "generation",
+      "outcome": "incorrect",
+      "flags": [
+        "unsupported_claims"
+      ],
+      "error": null
+    },
+    {
+      "item_id": "q-012",
+      "query": "Can I work from a beach in Spain for a month?",
+      "answerable": true,
+      "trap": "synonym",
+      "difficulty": "hard",
+      "answer": "I don't have enough information in the available documents to answer that confidently.",
+      "abstained": true,
+      "metrics": {
+        "context_recall_labels": 1.0,
+        "context_precision_labels": 1.0,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 1.0,
+        "context_recall": 1.0,
+        "answer_ok": 0.0,
+        "false_abstention": 1.0,
+        "answer_correctness": 0.0
+      },
+      "blame": "generation",
+      "outcome": "false_abstention",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "q-013",
+      "query": "Will the company pay for my home broadband?",
+      "answerable": true,
+      "trap": "synonym",
+      "difficulty": "medium",
+      "answer": "I don't have enough information in the available documents to answer that confidently. The context only mentions equipment and home office allowances, but it does not explicitly state whether the company pays for home broadband.",
+      "abstained": true,
+      "metrics": {
+        "context_recall_labels": 1.0,
+        "context_precision_labels": 1.0,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 0.0,
+        "context_recall": 1.0,
+        "answer_ok": 0.0,
+        "false_abstention": 1.0,
+        "answer_correctness": 0.0
+      },
+      "blame": "generation",
+      "outcome": "false_abstention",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "q-014",
+      "query": "How much can I claim for a desk chair for working from home?",
+      "answerable": true,
+      "trap": "exact-term",
+      "difficulty": "medium",
+      "answer": "According to [4] (doc:expense-policy-2021-archived), there is no specific information about claiming for a desk chair for working from home. However, it does mention that every claim needs a receipt.\n\nBut, according to [1] (doc:remote-work-policy) and [2] (doc:remote-work-policy), which are more relevant to the context of remote work, there is a one-off home office allowance of 300 euros for a desk chair or desk, through the expense system within the first six months of starting hybrid work.\n\nTherefore, you can claim up to 300 euros for a desk chair as part of your home office allowance.",
+      "abstained": false,
+      "metrics": {
+        "context_recall_labels": 1.0,
+        "context_precision_labels": 1.0,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 1.0,
+        "context_recall": 1.0,
+        "false_abstention": 0.0,
+        "faithfulness": 0.75,
+        "answer_relevance": 1.0,
+        "answer_correctness": 0.8571428571428571,
+        "answer_ok": 1.0
+      },
+      "blame": "none",
+      "outcome": "correct",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "q-015",
+      "query": "Which form do I fill in after losing a receipt?",
+      "answerable": true,
+      "trap": "exact-term",
+      "difficulty": "easy",
+      "answer": "If you lose a receipt, you need to fill in the missing receipt declaration form FIN-17 and attach it to your claim [doc:expense-reimbursement-policy score:0.54]. A missing receipt declaration can be used at most three times per year.",
+      "abstained": false,
+      "metrics": {
+        "context_recall_labels": 1.0,
+        "context_precision_labels": 0.5,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 0.5,
+        "context_recall": 1.0,
+        "false_abstention": 0.0,
+        "faithfulness": 1.0,
+        "answer_relevance": 1.0,
+        "answer_correctness": 1.0,
+        "answer_ok": 1.0
+      },
+      "blame": "none",
+      "outcome": "correct",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "q-016",
+      "query": "What is the rate per km for using my own car on business?",
+      "answerable": true,
+      "trap": "exact-term",
+      "difficulty": "easy",
+      "answer": "I don't have enough information in the available documents to answer that confidently, as there are multiple policies with different rates for mileage reimbursement. However, I can provide some possible answers based on the provided context:\n\n* According to [doc:expense-reimbursement-policy score:0.54], the rate is 0.30 euros per kilometre.\n* According to [doc:expense-policy-2021-archived score:0.60], the rate is 0.25 euros per kilometre.\n\nIt's unclear which policy is currently in effect, as [doc:expense-reimbursement-policy score:0.54] is version 4 and has a later effective date (1 February 2026) than [doc:expense-policy-2021-archived score:0.60], which is archived and superseded by version 4.",
+      "abstained": true,
+      "metrics": {
+        "context_recall_labels": 1.0,
+        "context_precision_labels": 0.3333333333333333,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 0.3333333333333333,
+        "context_recall": 1.0,
+        "answer_ok": 0.0,
+        "false_abstention": 1.0,
+        "answer_correctness": 0.0
+      },
+      "blame": "generation",
+      "outcome": "false_abstention",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "q-017",
+      "query": "How long do I have to submit an expense claim?",
+      "answerable": true,
+      "trap": "none",
+      "difficulty": "medium",
+      "answer": "According to the Expense Reimbursement Policy (Version 4) [doc:expense-reimbursement-policy], you have 60 days from the date the cost was incurred to submit an expense claim in the expense system. Claims submitted later than 60 days will not be reimbursed unless the finance director approves an exception.",
+      "abstained": false,
+      "metrics": {
+        "context_recall_labels": 1.0,
+        "context_precision_labels": 0.5,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 0.5,
+        "context_recall": 1.0,
+        "false_abstention": 0.0,
+        "faithfulness": 1.0,
+        "answer_relevance": 1.0,
+        "answer_correctness": 0.8,
+        "answer_ok": 1.0
+      },
+      "blame": "none",
+      "outcome": "correct",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "q-018",
+      "query": "When am I allowed to fly premium economy?",
+      "answerable": true,
+      "trap": "none",
+      "difficulty": "medium",
+      "answer": "According to the Business Travel Policy [doc:business-travel-policy score:0.60], you are allowed to fly premium economy if the flight has a scheduled duration of more than 6 hours.",
+      "abstained": false,
+      "metrics": {
+        "context_recall_labels": 1.0,
+        "context_precision_labels": 1.0,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 1.0,
+        "context_recall": 1.0,
+        "false_abstention": 0.0,
+        "faithfulness": 1.0,
+        "answer_relevance": 0.5,
+        "answer_correctness": 0.6666666666666666,
+        "answer_ok": 1.0
+      },
+      "blame": "none",
+      "outcome": "correct",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "q-019",
+      "query": "What's the hotel budget per night in Zurich?",
+      "answerable": true,
+      "trap": "exact-term",
+      "difficulty": "medium",
+      "answer": "According to document [3] (doc:expense-reimbursement-policy score:0.47), the hotel budget per night in Zurich is not explicitly mentioned. However, it is stated that the limit is 150 euros per night in most cities and 220 euros per night in high-cost cities such as London, Zurich, and New York.\n\nSo, for Zurich, the hotel budget per night would be 220 euros.",
+      "abstained": false,
+      "metrics": {
+        "context_recall_labels": 1.0,
+        "context_precision_labels": 1.0,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 1.0,
+        "context_recall": 0.0,
+        "false_abstention": 0.0,
+        "faithfulness": 0.75,
+        "answer_relevance": 0.25,
+        "answer_correctness": 0.8571428571428571,
+        "answer_ok": 1.0
+      },
+      "blame": "none",
+      "outcome": "correct",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "q-020",
+      "query": "Can I book a cheaper flight on another website and still get my money back?",
+      "answerable": true,
+      "trap": "synonym",
+      "difficulty": "hard",
+      "answer": "According to document [1] (Business Travel Policy), you can book a cheaper flight on another website and still get your money back if it is at least 15% cheaper than the lowest TravelDesk fare available at the time, and a screenshot of the TravelDesk fare is attached to the claim.",
+      "abstained": false,
+      "metrics": {
+        "context_recall_labels": 1.0,
+        "context_precision_labels": 1.0,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 1.0,
+        "context_recall": 1.0,
+        "false_abstention": 0.0,
+        "faithfulness": 1.0,
+        "answer_relevance": 1.0,
+        "answer_correctness": 1.0,
+        "answer_ok": 1.0
+      },
+      "blame": "none",
+      "outcome": "correct",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "q-021",
+      "query": "I want to stay a few extra days on holiday after a work trip - who pays for what?",
+      "answerable": true,
+      "trap": "multi-doc",
+      "difficulty": "hard",
+      "answer": "I don't have enough information in the available documents to answer that confidently. The provided policies (Annual Leave Policy [1], Business Travel Policy [3]) do not mention who pays for extra days taken on a holiday after a work trip.",
+      "abstained": true,
+      "metrics": {
+        "context_recall_labels": 1.0,
+        "context_precision_labels": 1.0,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 0.3333333333333333,
+        "context_recall": 0.5,
+        "answer_ok": 0.0,
+        "false_abstention": 1.0,
+        "answer_correctness": 0.0
+      },
+      "blame": "generation",
+      "outcome": "false_abstention",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "q-022",
+      "query": "I left my work laptop on the train. What should I do?",
+      "answerable": true,
+      "trap": "none",
+      "difficulty": "easy",
+      "answer": "According to [1] (doc:it-security-policy score:0.50), if you left your work laptop on the train, you should report it to the IT Service Desk within one hour of noticing by calling the service desk or using the chat. The device will be locked and wiped remotely. You should also report the theft to the police and send the report number to the service desk.",
+      "abstained": false,
+      "metrics": {
+        "context_recall_labels": 1.0,
+        "context_precision_labels": 1.0,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 0.0,
+        "context_recall": 1.0,
+        "false_abstention": 0.0,
+        "faithfulness": 1.0,
+        "answer_relevance": 1.0,
+        "answer_correctness": 0.6666666666666666,
+        "answer_ok": 1.0
+      },
+      "blame": "none",
+      "outcome": "correct",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "q-023",
+      "query": "How long does my account password have to be?",
+      "answerable": true,
+      "trap": "exact-term",
+      "difficulty": "easy",
+      "answer": "According to document [1] (doc:it-security-policy), your company account password must be at least 14 characters long.",
+      "abstained": false,
+      "metrics": {
+        "context_recall_labels": 1.0,
+        "context_precision_labels": 1.0,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 1.0,
+        "context_recall": 1.0,
+        "false_abstention": 0.0,
+        "faithfulness": 1.0,
+        "answer_relevance": 1.0,
+        "answer_correctness": 0.6666666666666666,
+        "answer_ok": 1.0
+      },
+      "blame": "none",
+      "outcome": "correct",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "q-024",
+      "query": "I clicked a link in a dodgy email by accident. Will I be punished?",
+      "answerable": true,
+      "trap": "synonym",
+      "difficulty": "hard",
+      "answer": "I don't have enough information in the available documents to answer that confidently. The context only provides company policies and procedures related to whistleblowing, gifts and hospitality, IT security, and other internal matters, but it does not mention any consequences for clicking a link in a dodgy email by accident.",
+      "abstained": true,
+      "metrics": {
+        "context_recall_labels": 1.0,
+        "context_precision_labels": 0.3333333333333333,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 0.3333333333333333,
+        "context_recall": 1.0,
+        "answer_ok": 0.0,
+        "false_abstention": 1.0,
+        "answer_correctness": 0.0
+      },
+      "blame": "generation",
+      "outcome": "false_abstention",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "q-031",
+      "query": "If I put 8% of my salary into the pension, how much does Kestrel add?",
+      "answerable": true,
+      "trap": "exact-term",
+      "difficulty": "medium",
+      "answer": "If you put 8% of your salary into the pension, Kestrel adds 6% to that contribution [doc:benefits-overview score:0.71].",
+      "abstained": false,
+      "metrics": {
+        "context_recall_labels": 1.0,
+        "context_precision_labels": 1.0,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 1.0,
+        "context_recall": 1.0,
+        "false_abstention": 0.0,
+        "faithfulness": 0.5,
+        "answer_relevance": 1.0,
+        "answer_correctness": 0.6666666666666666,
+        "answer_ok": 0.0
+      },
+      "blame": "generation",
+      "outcome": "incorrect",
+      "flags": [
+        "unsupported_claims"
+      ],
+      "error": null
+    },
+    {
+      "item_id": "q-032",
+      "query": "Does private medical insurance pay for new glasses?",
+      "answerable": true,
+      "trap": "none",
+      "difficulty": "hard",
+      "answer": "According to the context [3] (doc:expense-reimbursement-policy), which is the current Expense Reimbursement Policy effective from 1 February 2026, private medical insurance does not pay for new glasses. However, dental and optical treatment are covered by a separate cash plan, as mentioned in section 3 of the Employee Benefits Overview [1] (doc:benefits-overview).",
+      "abstained": false,
+      "metrics": {
+        "context_recall_labels": 1.0,
+        "context_precision_labels": 1.0,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 0.0,
+        "context_recall": 1.0,
+        "false_abstention": 0.0,
+        "faithfulness": 1.0,
+        "answer_relevance": 0.25,
+        "answer_correctness": 0.4,
+        "answer_ok": 0.0
+      },
+      "blame": "generation",
+      "outcome": "incorrect",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "q-033",
+      "query": "Can I report fraud without giving my name?",
+      "answerable": true,
+      "trap": "synonym",
+      "difficulty": "easy",
+      "answer": "According to document [1] (doc:whistleblowing-procedure), you can report fraud anonymously through the independent Speak-Up hotline, which is available 24 hours a day in several languages and allows reports to be made by phone or through its website.",
+      "abstained": false,
+      "metrics": {
+        "context_recall_labels": 1.0,
+        "context_precision_labels": 1.0,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 1.0,
+        "context_recall": 1.0,
+        "false_abstention": 0.0,
+        "faithfulness": 1.0,
+        "answer_relevance": 1.0,
+        "answer_correctness": 0.75,
+        "answer_ok": 1.0
+      },
+      "blame": "none",
+      "outcome": "correct",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "q-034",
+      "query": "How quickly will I hear back after raising a concern?",
+      "answerable": true,
+      "trap": "none",
+      "difficulty": "medium",
+      "answer": "According to the Whistleblowing Procedure [doc:whistleblowing-procedure score:0.62], every report is acknowledged within 7 days. However, it does not specify how quickly you will hear back after raising a concern beyond that initial acknowledgement.\n\nIt does mention that the person who raised the concern receives feedback on the outcome within three months, where this is possible without breaching confidentiality.",
+      "abstained": false,
+      "metrics": {
+        "context_recall_labels": 1.0,
+        "context_precision_labels": 1.0,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 1.0,
+        "context_recall": 1.0,
+        "false_abstention": 0.0,
+        "faithfulness": 0.6666666666666666,
+        "answer_relevance": 0.5,
+        "answer_correctness": 0.8,
+        "answer_ok": 1.0
+      },
+      "blame": "none",
+      "outcome": "correct",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "q-036",
+      "query": "When can I change my pension contribution or buy extra holiday days?",
+      "answerable": true,
+      "trap": "multi-doc",
+      "difficulty": "hard",
+      "answer": "You can change your pension contribution once a month in the benefits portal [doc:benefits-overview score:0.59].\n\nYou can buy extra holiday days once per year, during the benefits window in November, through salary sacrifice, up to a maximum of five additional days [doc:annual-leave-policy score:0.65].",
+      "abstained": false,
+      "metrics": {
+        "context_recall_labels": 1.0,
+        "context_precision_labels": 0.41666666666666663,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 1.0,
+        "context_recall": 1.0,
+        "false_abstention": 0.0,
+        "faithfulness": 1.0,
+        "answer_relevance": 1.0,
+        "answer_correctness": 0.8,
+        "answer_ok": 1.0
+      },
+      "blame": "none",
+      "outcome": "correct",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "q-037",
+      "query": "What security rules do I have to follow when working from home?",
+      "answerable": true,
+      "trap": "multi-doc",
+      "difficulty": "medium",
+      "answer": "Based on the provided context, specifically [1] (doc:remote-work-policy score:0.72) and [3] (doc:it-security-policy score:0.66), when working from home, you must follow these security rules:\n\n* Connect to company systems only through the company VPN.\n* Do not use public computers.\n* Lock your screen whenever you leave your device, including at home.\n* Confidential papers must not be printed at home.\n\nAdditionally, as stated in [3] (doc:it-security-policy score:0.66), when accessing customer data, only company-managed devices may be used.",
+      "abstained": false,
+      "metrics": {
+        "context_recall_labels": 1.0,
+        "context_precision_labels": 0.5833333333333333,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 0.5,
+        "context_recall": 1.0,
+        "false_abstention": 0.0,
+        "faithfulness": 1.0,
+        "answer_relevance": 1.0,
+        "answer_correctness": 0.8888888888888888,
+        "answer_ok": 1.0
+      },
+      "blame": "none",
+      "outcome": "correct",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "q-038",
+      "query": "What's the daily allowance on a business trip and does it include food?",
+      "answerable": true,
+      "trap": "multi-doc",
+      "difficulty": "hard",
+      "answer": "According to [4] (doc:expense-reimbursement-policy score:0.60), the daily allowance for meals on a business trip is reimbursed up to a daily limit of 60 euros. This does not include food that is part of a client meal, which can be reimbursed at actual cost.\n\nNote that this policy document supersedes [3] (doc:expense-policy-2021-archived score:0.63), which had a daily limit of 45 euros for business travel meals.",
+      "abstained": false,
+      "metrics": {
+        "context_recall_labels": 1.0,
+        "context_precision_labels": 0.5,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 0.5,
+        "context_recall": 1.0,
+        "false_abstention": 0.0,
+        "faithfulness": 1.0,
+        "answer_relevance": 0.5,
+        "answer_correctness": 0.8,
+        "answer_ok": 0.0
+      },
+      "blame": "generation",
+      "outcome": "incorrect",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "q-040",
+      "query": "Is there a company car scheme for managers?",
+      "answerable": false,
+      "trap": "unanswerable",
+      "difficulty": "hard",
+      "answer": "I don't have enough information in the available documents to answer that confidently. There is no mention of a company car scheme for managers or any employees in the provided context.",
+      "abstained": true,
+      "metrics": {
+        "answered_unanswerable": 0.0,
+        "answer_ok": 1.0
+      },
+      "blame": "none",
+      "outcome": "correct_abstention",
+      "flags": [],
+      "error": null
+    },
+    {
+      "item_id": "syn-001",
+      "query": "How much can I claim for per diem?",
+      "answerable": true,
+      "trap": "none",
+      "difficulty": "easy",
+      "answer": "According to [doc:expense-reimbursement-policy score:0.58], you can claim up to a daily limit of 60 euros for meals when traveling for business.",
+      "abstained": false,
+      "metrics": {
+        "context_recall_labels": 0.0,
+        "context_precision_labels": 0.0,
+        "retrieval_recall_labels": 1.0,
+        "context_precision": 1.0,
+        "context_recall": 1.0,
+        "false_abstention": 0.0,
+        "faithfulness": 1.0,
+        "answer_relevance": 0.5,
+        "answer_correctness": 0.0,
+        "answer_ok": 0.0
+      },
+      "blame": "rerank",
+      "outcome": "incorrect",
+      "flags": [],
+      "error": null
+    }
+  ],
+  "aggregates": {
+    "answer_correctness": {
+      "mean": 0.5238400488400489,
+      "low": 0.3725335775335776,
+      "high": 0.6701923076923075,
+      "n": 26,
+      "sd": 0.38393596724884105
+    },
+    "answer_ok": {
+      "mean": 0.5555555555555556,
+      "low": 0.37037037037037035,
+      "high": 0.7407407407407407,
+      "n": 27,
+      "sd": 0.5063696835418333
+    },
+    "answer_relevance": {
+      "mean": 0.7763157894736842,
+      "low": 0.6447368421052632,
+      "high": 0.9078947368421053,
+      "n": 19,
+      "sd": 0.31063037209869776
+    },
+    "answered_unanswerable": {
+      "mean": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "n": 1,
+      "sd": 0.0
+    },
+    "context_precision": {
+      "mean": 0.625,
+      "low": 0.47427884615384636,
+      "high": 0.7628205128205128,
+      "n": 26,
+      "sd": 0.3867600461957431
+    },
+    "context_precision_labels": {
+      "mean": 0.7660256410256411,
+      "low": 0.6442307692307693,
+      "high": 0.8846153846153846,
+      "n": 26,
+      "sd": 0.318868860861876
+    },
+    "context_recall": {
+      "mean": 0.9038461538461539,
+      "low": 0.7884615384615384,
+      "high": 1.0,
+      "n": 26,
+      "sd": 0.28352180759972484
+    },
+    "context_recall_labels": {
+      "mean": 0.9423076923076923,
+      "low": 0.8461538461538461,
+      "high": 1.0,
+      "n": 26,
+      "sd": 0.21572774865200245
+    },
+    "faithfulness": {
+      "mean": 0.9035087719298246,
+      "low": 0.8201754385964912,
+      "high": 0.9736842105263158,
+      "n": 19,
+      "sd": 0.17625904646850982
+    },
+    "false_abstention": {
+      "mean": 0.2692307692307692,
+      "low": 0.11538461538461539,
+      "high": 0.46153846153846156,
+      "n": 26,
+      "sd": 0.4523443208612048
+    },
+    "retrieval_recall_labels": {
+      "mean": 1.0,
+      "low": 1.0,
+      "high": 1.0,
+      "n": 26,
+      "sd": 0.0
+    }
+  },
+  "components": {
+    "stages": {
+      "ingestion": {
+        "ok": 26,
+        "skip": 1
+      },
+      "retrieval": {
+        "ok": 26,
+        "skip": 1
+      },
+      "rerank": {
+        "ok": 24,
+        "warn": 1,
+        "skip": 1,
+        "fail": 1
+      },
+      "grade": {
+        "skip": 27
+      },
+      "generation": {
+        "ok": 15,
+        "fail": 11,
+        "skip": 1
+      }
+    },
+    "blame": {
+      "none": 15,
+      "generation": 11,
+      "rerank": 1
+    },
+    "blame_by_trap": {
+      "exact-term": {
+        "generation": 3,
+        "none": 4
+      },
+      "multi-doc": {
+        "generation": 2,
+        "none": 2
+      },
+      "none": {
+        "none": 6,
+        "generation": 2,
+        "rerank": 1
+      },
+      "synonym": {
+        "generation": 4,
+        "none": 2
+      },
+      "unanswerable": {
+        "none": 1
+      }
+    },
+    "outcomes": {
+      "correct": 14,
+      "false_abstention": 7,
+      "incorrect": 5,
+      "correct_abstention": 1
+    },
+    "funnel": [
+      {
+        "step": "answerable questions",
+        "n": 26
+      },
+      {
+        "step": "evidence indexed",
+        "n": 26
+      },
+      {
+        "step": "evidence in candidates",
+        "n": 26
+      },
+      {
+        "step": "evidence in context",
+        "n": 25
+      },
+      {
+        "step": "context accepted",
+        "n": 25
+      },
+      {
+        "step": "answered correctly",
+        "n": 14
+      }
+    ],
+    "flags": {
+      "unsupported_claims": 2
+    }
+  },
+  "diagnostics": {
+    "errors": 0.0,
+    "mean_latency_ms": 25241.95427729642,
+    "judge_calls": 352.0
+  },
+  "error": null
+}
