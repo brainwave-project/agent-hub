@@ -20,6 +20,40 @@ uv run pytest tests/test_retrieval_metrics.py tests/test_arabic_normalize.py tes
 
 ---
 
+## Experiment 3 — Arabic normalization and passage retrieval
+
+The **Evaluation → Arabic Norm** page (`/evaluation/normalization`) runs controlled
+BM25 and optional local dense retrieval over imported passage datasets. This
+experiment is independent of know-hub: it preserves MIRACL passage IDs, avoids
+the hybrid-search analyzer and chunking confounds, and records fixed-cutoff
+metrics, per-query rankings, paired bootstrap intervals, and input hashes.
+
+Start the standalone API with `uv run python -m agent_hub.eval.lab` and the UI
+with `npm run dev`. The BM25 experiment needs no Docker services. The normal
+`make evals-lab` flow continues to support the other Evaluation Lab pages.
+
+Follow [`docs/experiment-3/EXPERIMENT-3-GUIDE.md`](../../../../docs/experiment-3/EXPERIMENT-3-GUIDE.md)
+for the original diagnostic fixture, official MIRACL preparation, model
+revision pinning, resource planning, failure analysis, and article draft.
+The CLI entry point is `python -m agent_hub.eval.normalization --help`.
+Its default store is `lab_store/normalization` inside this evaluation directory;
+`EVAL_LAB_DIR` changes the shared parent store for both CLI and API.
+
+These six experiment presets are narrower than the older `arabic.normalize`
+presets: `raw`, `diacritics` (U+064B–U+0652), `tatweel` (U+0640), `alef`
+(أ/إ/آ → ا), their `conservative` combination, and `aggressive` (add ى → ي,
+ة → ه). No preset implies information loss is harmless. Controlled BM25 uses
+a Unicode category tokenizer that preserves combining marks; it is not the
+official Lucene ArabicAnalyzer baseline. Dense runs require the optional
+`rerank` dependency and an exact model revision.
+
+Diagnostic and reduced pilot results are not MIRACL benchmark results. Large
+corpora are streamed into the benchmark store through the CLI; the browser
+imports only small JSON bundles. Existing Golden Set freeze and holdout rules
+continue to apply to their own datasets and experiments.
+
+---
+
 ## What the stack looks like
 
 `make evals` runs postgres, mongodb, minio, kafka, ollama, know-hub, and a

@@ -792,11 +792,18 @@ def create_app(
     app.include_router(api)
     # Imported here: both modules import from this package's runner/store, and
     # keeping them out of module scope keeps api.py importable on its own.
-    from agent_hub.eval.lab import routes_gate, routes_generation, routes_insight, routes_labeling
+    from agent_hub.eval.lab import (
+        routes_gate,
+        routes_generation,
+        routes_insight,
+        routes_labeling,
+        routes_normalization,
+    )
     from agent_hub.eval.lab.llm import OllamaLLM
 
     app.include_router(routes_labeling.build_router(store, kh, jobs, _bundle_json))
     app.include_router(routes_insight.build_router(store))
     app.include_router(routes_generation.build_router(store, kh, llm or OllamaLLM(), jobs))
     app.include_router(routes_gate.build_router(store))
+    app.include_router(routes_normalization.build_router(store, jobs))
     return app

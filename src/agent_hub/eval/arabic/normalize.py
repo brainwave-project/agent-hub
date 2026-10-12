@@ -1,7 +1,7 @@
 """Arabic orthographic normalisation, one toggle per transform.
 
-Why one toggle per transform: the interesting question is never "does
-normalisation help?" (it does) but "which normalisation, and at what cost?".
+Why one toggle per transform: measure whether normalisation helps a particular
+retriever and corpus, then ask which transformation caused the change and at what cost.
 Every transform here destroys information in exchange for recall, and the
 trade is different for each one. Bundling them behind a single boolean makes
 that trade invisible, so each is independently switchable and the harness
@@ -93,9 +93,9 @@ class NormalizeConfig:
 
 OFF = NormalizeConfig()
 
-#: Safe, near-lossless. Every transform here removes a mark that carries no
-#: lexical distinction in Modern Standard Arabic prose, so nothing that
-#: distinguishes two real words is destroyed.
+#: A less aggressive preset, not a claim of semantic equivalence or zero loss.
+#: Diacritic removal and Alef folding can merge distinct words. Their retrieval
+#: benefit and cost depend on the corpus and retriever and must be measured.
 CONSERVATIVE = NormalizeConfig(
     nfc=True,
     strip_diacritics=True,
@@ -106,10 +106,9 @@ CONSERVATIVE = NormalizeConfig(
     collapse_whitespace=True,
 )
 
-#: Maximum recall, accepted information loss. Adds the transforms that CAN
-#: merge genuinely distinct words — see the cost notes in TRANSFORMS below.
-#: Use when recall matters more than precision, and measure the precision cost
-#: rather than assuming it is small.
+#: Broader character conflation with additional information loss. Neither a
+#: recall gain nor a precision loss is guaranteed; measure both for the chosen
+#: corpus and retriever. See the transformation cost notes below.
 AGGRESSIVE = replace(
     CONSERVATIVE,
     unify_hamza=True,
